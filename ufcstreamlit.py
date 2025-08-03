@@ -19,7 +19,7 @@ model = joblib.load("random_forest_model.pkl")
 
 # Set page config
 st.set_page_config(page_title="UFC Fight Outcome Predictor", layout="wide")
-st.title(" UFC Fight Outcome Predictor")
+st.title("🥊 UFC Fight Outcome Predictor")
 
 # Sidebar: Input form
 st.sidebar.header("Enter Fighter Stats")
@@ -116,7 +116,7 @@ if submit:
 
 # --- Optional: Placeholder for graphs ---
 st.markdown("---")
-st.subheader(" Data Visualizations")
+st.subheader("📊 Data Visualizations")
 
 # Example bar chart (replace with your actual graphs)
 data = {"Method": ["KO", "Submission", "Decision"], "Percentage": [40, 25, 35]}
