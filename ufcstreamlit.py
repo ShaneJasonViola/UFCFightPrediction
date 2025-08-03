@@ -12,7 +12,7 @@ import seaborn as sns
 # Load Model
 # -------------------------------
 try:
-    model = joblib.load("random_forest_model.pkl")  # Ensure this matches your GitHub model name
+    model = joblib.load("random_forest_model (7).pkl")  # Ensure this matches your GitHub model name
 except Exception as e:
     st.error("🚫 Failed to load model.")
     st.text(traceback.format_exc())
