@@ -8,6 +8,32 @@ Original file is located at
 """
 
 import streamlit as st
+
+import streamlit as st
+
+try:
+    import pandas as pd
+    import numpy as np
+    import joblib
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+except ModuleNotFoundError as e:
+    st.error(f"Module import failed: {e}")
+    st.stop()
+except Exception as e:
+    st.error(f"Unexpected error during import: {e}")
+    st.stop()
+
+# Load model
+try:
+    model = joblib.load("random_forest_model.pkl")
+except FileNotFoundError:
+    st.error("Model file not found. Make sure 'random_forest_model.pkl' is in the working directory.")
+    st.stop()
+except Exception as e:
+    st.error(f"Failed to load model: {e}")
+    st.stop()
+
 import pandas as pd
 import numpy as np
 import joblib
