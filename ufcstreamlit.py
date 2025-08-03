@@ -16,8 +16,11 @@ try:
     import joblib
     import matplotlib.pyplot as plt
     import seaborn as sns
-except ModuleNotFoundError as e:
-    st.error(f"Module import failed: {e}")
+import traceback
+
+except Exception as e:
+    st.error("Failed to load model:")
+    st.text(traceback.format_exc())
     st.stop()
 
 # --- Load Trained Model ---
