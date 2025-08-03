@@ -28,7 +28,7 @@ except Exception as e:
 try:
     model = joblib.load("random_forest_model.pkl")
 except FileNotFoundError:
-    st.error("Model file not found. Make sure 'random_forest_model.pkl' is in the working directory.")
+    st.error("Model file not found. Make sure 'random_forest_model.pkl(1)' is in the working directory.")
     st.stop()
 except Exception as e:
     st.error(f"Failed to load model: {e}")
