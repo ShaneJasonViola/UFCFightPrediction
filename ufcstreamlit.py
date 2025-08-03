@@ -41,7 +41,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Load model
-model = joblib.load("random_forest_model.pkl")
+model = joblib.load("random_forest_model.pkl(1)")
 
 # Set page config
 st.set_page_config(page_title="UFC Fight Outcome Predictor", layout="wide")
@@ -142,7 +142,7 @@ if submit:
 
 # --- Optional: Placeholder for graphs ---
 st.markdown("---")
-st.subheader("📊 Data Visualizations")
+st.subheader(" Data Visualizations")
 
 # Example bar chart (replace with your actual graphs)
 data = {"Method": ["KO", "Submission", "Decision"], "Percentage": [40, 25, 35]}
