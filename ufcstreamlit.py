@@ -1,4 +1,3 @@
-# streamlit_app.py
 import streamlit as st
 import numpy as np
 import joblib
@@ -10,28 +9,60 @@ def load_model():
 
 model = load_model()
 
-# App layout
+# Title
 st.title("UFC Fight Outcome Predictor")
-st.markdown("Enter fighter stats below. The app will calculate derived features and predict the winner.")
+st.markdown("Enter both fighters' statistics below. The app will calculate derived features and predict the winner.")
 
-# Fighter input form
-with st.form("fight_form"):
-    st.header("Fighter Stats")
-
+# Form for user input
+with st.form("fight_input_form"):
     col1, col2 = st.columns(2)
+
     with col1:
-        red_age = st.number_input("Red Fighter Age", min_value=18, max_value=60)
-        red_wins = st.number_input("Red Fighter Wins", min_value=0)
-        red_losses = st.number_input("Red Fighter Losses", min_value=0)
-        red_td_landed = st.number_input("Red Avg TD Landed", min_value=0.0)
-        red_sig_str_pct = st.number_input("Red Sig Str %", min_value=0.0, max_value=1.0)
-        red_odds = st.number_input("Red Odds", value=100.0)
+        st.subheader("Red Fighter Stats")
+        red_age = st.number_input("Red Age", min_value=18, max_value=60, value=28)
+        red_wins = st.number_input("Red Wins", min_value=0, value=10)
+        red_losses = st.number_input("Red Losses", min_value=0, value=5)
+        red_td_landed = st.number_input("Red Avg TD Landed", min_value=0.0, value=1.5)
+        red_sig_str_pct = st.number_input("Red Sig Str % (0-1)", min_value=0.0, max_value=1.0, value=0.45)
+        red_odds = st.number_input("Red Odds", value=-120.0)
+        red_reach = st.number_input("Red Reach (cm)", min_value=100.0, max_value=250.0, value=180.0)
 
     with col2:
-        blue_age = st.number_input("Blue Fighter Age", min_value=18, max_value=60)
-        blue_wins = st.number_input
+        st.subheader("Blue Fighter Stats")
+        blue_age = st.number_input("Blue Age", min_value=18, max_value=60, value=30)
+        blue_wins = st.number_input("Blue Wins", min_value=0, value=12)
+        blue_losses = st.number_input("Blue Losses", min_value=0, value=6)
+        blue_td_landed = st.number_input("Blue Avg TD Landed", min_value=0.0, value=1.2)
+        blue_sig_str_pct = st.number_input("Blue Sig Str % (0-1)", min_value=0.0, max_value=1.0, value=0.43)
+        blue_odds = st.number_input("Blue Odds", value=110.0)
+        blue_reach = st.number_input("Blue Reach (cm)", min_value=100.0, max_value=250.0, value=185.0)
 
+    submitted = st.form_submit_button("Predict Winner")
 
+# Prediction logic
+if submitted:
+    # Derived features
+    age_dif = blue_age - red_age
+    red_win_loss_ratio = red_wins / (red_wins + red_losses + 1)
+    blue_win_loss_ratio = blue_wins / (blue_wins + blue_losses + 1)
+    reach_dif = red_reach - blue_reach
+
+    input_vector = np.array([[
+        red_odds, blue_odds,
+        blue_age, red_age, age_dif,
+        red_win_loss_ratio, blue_win_loss_ratio,
+        red_td_landed, blue_td_landed,
+        red_sig_str_pct, blue_sig_str_pct,
+        reach_dif
+    ]])
+
+    pred = model.predict(input_vector)[0]
+    confidence = model.predict_proba(input_vector)[0][pred] * 100
+    winner = "Red Fighter" if pred == 1 else "Blue Fighter"
+
+    st.subheader("Prediction Result")
+    st.write(f"Predicted Winner: **{winner}**")
+    st.write(f"Prediction Confidence: **{confidence:.2f}%**")
 # -------------------------------
 # Dashboard - Optional Chart
 # -------------------------------
