@@ -7,8 +7,9 @@ Original file is located at
     https://colab.research.google.com/drive/1949ZdqPuHt9fLz4fmmwtQGuAShEhDCbI
 """
 import streamlit as st
-import traceback  # ✅ Import here, at the top
+import traceback  # Moved outside of try block
 
+# Import dependencies
 try:
     import pandas as pd
     import numpy as np
@@ -20,35 +21,35 @@ except ModuleNotFoundError as e:
     st.stop()
 except Exception as e:
     st.error("Unexpected error during import:")
-    st.text(traceback.format_exc())  # ✅ Now this works
+    st.text(traceback.format_exc())
     st.stop()
 
-# Load model
+# Load model with full error handling
 try:
     model = joblib.load("random_forest_model.pkl")
 except FileNotFoundError:
-    st.error("Model file not found. Make sure 'random_forest_model.pkl' is in the working directory.")
+    st.error("Model file not found. Make sure 'random_forest_model.pkl' is in the repo root.")
     st.stop()
 except Exception as e:
     st.error("Failed to load model:")
-    st.text(traceback.format_exc())  # ✅ This shows the full stack trace
+    st.text(traceback.format_exc())
     st.stop()
 
-# --- Streamlit Page Config ---
+# Set up Streamlit app layout
 st.set_page_config(page_title="UFC Fight Outcome Predictor", layout="wide")
 st.title("🥊 UFC Fight Outcome Predictor")
 
-# --- User Input Form ---
+# Sidebar input form
 st.sidebar.header("Enter Fighter Stats")
 with st.sidebar.form("input_form"):
-    red_age = st.number_input("Red Fighter Age", 18, 60, 30)
-    blue_age = st.number_input("Blue Fighter Age", 18, 60, 30)
+    red_age = st.number_input("Red Fighter Age", min_value=18, max_value=60, value=30)
+    blue_age = st.number_input("Blue Fighter Age", min_value=18, max_value=60, value=30)
 
     red_odds = st.number_input("Red Fighter Odds", value=-150)
     blue_odds = st.number_input("Blue Fighter Odds", value=130)
 
-    red_reach = st.number_input("Red Reach (cm)", 100, 250, 180)
-    blue_reach = st.number_input("Blue Reach (cm)", 100, 250, 180)
+    red_reach = st.number_input("Red Reach (cm)", min_value=100, max_value=250, value=180)
+    blue_reach = st.number_input("Blue Reach (cm)", min_value=100, max_value=250, value=180)
 
     red_td = st.number_input("Red Avg Takedowns Landed", value=1.5)
     blue_td = st.number_input("Blue Avg Takedowns Landed", value=1.0)
@@ -68,13 +69,24 @@ with st.sidebar.form("input_form"):
     red_ko = st.number_input("Red Wins by KO", value=5)
     red_sub = st.number_input("Red Wins by Submission", value=3)
     red_wins = st.number_input("Red Total Wins", value=10)
+
     blue_total_fights = st.number_input("Blue Total Fights", value=15)
 
     submit = st.form_submit_button("Predict Outcome")
 
-# --- Compute Feature Differences ---
+# Compute difference features for prediction
 def compute_features():
-    return pd.DataFrame([{
+    reach_dif = red_reach - blue_reach
+    age_dif = red_age - blue_age
+    td_dif = red_td - blue_td
+    sigstr_pct_dif = red_sig_str_pct - blue_sig_str_pct
+    td_pct_dif = red_td_pct - blue_td_pct
+    sub_att_dif = red_sub_att - blue_sub_att
+    sigstr_landed_dif = red_sigstr_landed - blue_sigstr_landed
+    kopct_red = red_ko / (red_wins + 1)
+    subpct_red = red_sub / (red_wins + 1)
+
+    features = pd.DataFrame([{
         "RedAge": red_age,
         "BlueAge": blue_age,
         "RedOdds": red_odds,
@@ -93,34 +105,46 @@ def compute_features():
         "RedWinsBySubmission": red_sub,
         "RedWins": red_wins,
         "BlueTotalFights": blue_total_fights,
-        "ReachDif": red_reach - blue_reach,
-        "AgeDif": red_age - blue_age,
-        "TDLandedDif": red_td - blue_td,
-        "SigStrPctDif": red_sig_str_pct - blue_sig_str_pct,
-        "TDPctDiff": red_td_pct - blue_td_pct,
-        "SubAttDif": red_sub_att - blue_sub_att,
-        "SigStrLandedDif": red_sigstr_landed - blue_sigstr_landed,
-        "KOPctDiff": red_ko / (red_wins + 1),
-        "SubPctDiff": red_sub / (red_wins + 1),
+        "ReachDif": reach_dif,
+        "AgeDif": age_dif,
+        "TDLandedDif": td_dif,
+        "SigStrPctDif": sigstr_pct_dif,
+        "TDPctDiff": td_pct_dif,
+        "SubAttDif": sub_att_dif,
+        "SigStrLandedDif": sigstr_landed_dif,
+        "KOPctDiff": kopct_red,
+        "SubPctDiff": subpct_red
     }])
 
-# --- Prediction ---
+    return features
+
+# Run prediction
 if submit:
     try:
         X_input = compute_features()
         pred = model.predict(X_input)[0]
         prob = model.predict_proba(X_input)[0]
+
         result = "Red Fighter Wins" if pred == 1 else "Blue Fighter Wins"
         st.success(f"Prediction: **{result}**")
         st.write(f"Confidence - Red: {prob[1]*100:.1f}% | Blue: {prob[0]*100:.1f}%")
     except Exception as e:
-        st.error(f"Prediction failed: {e}")
+        st.error("Error during prediction:")
+        st.text(traceback.format_exc())
 
-# --- Sample Visualization ---
+# Visualizations section
 st.markdown("---")
-st.subheader("📊 Sample Win Method Chart")
-viz_data = {"Method": ["KO", "Submission", "Decision"], "Percentage": [40, 25, 35]}
-sns.barplot(data=pd.DataFrame(viz_data), x="Method", y="Percentage")
-plt.title("Win Method Distribution")
-st.pyplot(plt.gcf())
-plt.clf()
+st.subheader("📊 Data Visualizations")
+
+# Example placeholder bar chart
+try:
+    data = {"Method": ["KO", "Submission", "Decision"], "Percentage": [40, 25, 35]}
+    df_viz = pd.DataFrame(data)
+    sns.barplot(data=df_viz, x="Method", y="Percentage")
+    plt.title("Win Method Distribution")
+    st.pyplot(plt.gcf())
+    plt.clf()
+except Exception as e:
+    st.error("Error generating chart:")
+    st.text(traceback.format_exc())
+
