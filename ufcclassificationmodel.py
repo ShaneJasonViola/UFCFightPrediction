@@ -610,7 +610,7 @@ best_rf = grid_search.best_estimator_
 y_pred = best_rf.predict(x_test)
 
 # 7. Report results
-print("✅ Best Parameters:", grid_search.best_params_)
-print("✅ Tuned Random Forest Accuracy:", accuracy_score(y_test, y_pred))
+print("Best Parameters:", grid_search.best_params_)
+print("Tuned Random Forest Accuracy:", accuracy_score(y_test, y_pred))
 print(classification_report(y_test, y_pred))
 '''
