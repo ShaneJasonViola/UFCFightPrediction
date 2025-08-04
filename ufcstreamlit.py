@@ -2,6 +2,8 @@ import streamlit as st
 import numpy as np
 import joblib
 import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.metrics import confusion_matrix
 
 
 # Load model
@@ -89,5 +91,20 @@ ax.set_xticks(range(len(importances)))
 ax.set_xticklabels(feature_names_sorted, rotation=45, ha='right')
 ax.set_title("Feature Importances - Random Forest")
 ax.set_ylabel("Importance Score")
+plt.tight_layout()
+st.pyplot(fig)
+
+# Predict and calculate confusion matrix
+y_pred_rf = rf.predict(x_test)
+cm_rf = confusion_matrix(y_test, y_pred_rf)
+
+# Plot confusion matrix
+st.subheader(" Confusion Matrix - Random Forest")
+fig, ax = plt.subplots(figsize=(6, 4))
+sns.heatmap(cm_rf, annot=True, fmt='d', cmap='Blues',
+            xticklabels=['Loss', 'Win'], yticklabels=['Loss', 'Win'], ax=ax)
+ax.set_xlabel('Predicted Label')
+ax.set_ylabel('True Label')
+ax.set_title('Confusion Matrix - Random Forest')
 plt.tight_layout()
 st.pyplot(fig)
