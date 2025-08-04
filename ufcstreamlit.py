@@ -6,9 +6,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import confusion_matrix
 
-st.markdown("## 📚 External Resources")
-st.markdown("- 🗓️ [Upcoming UFC Events](https://www.ufc.com/events)")
-st.markdown("- 🥋 [UFC Fighter Statistics](http://ufcstats.com/statistics/fighters)")
+
 
 
 # Load model
@@ -21,6 +19,11 @@ model = load_model()
 # Title
 st.title("UFC Fight Outcome Predictor")
 st.markdown("Enter both fighters' statistics below. The app will predict the winner.")
+
+#Resources to look up information
+st.markdown("## External Resources")
+st.markdown("- 🗓️ [Upcoming UFC Events](https://www.ufc.com/events)")
+st.markdown("- 🥋 [UFC Fighter Statistics](http://ufcstats.com/statistics/fighters)")
 
 # Form for user input
 with st.form("fight_input_form"):
