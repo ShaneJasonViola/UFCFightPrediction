@@ -6,6 +6,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import confusion_matrix
 
+with st.sidebar:
+    st.markdown("## 📚 Resources")
+    st.markdown("- 🗓️ [UFC Events](https://www.ufc.com/events)")
+    st.markdown("- 🥋 [Fighter Stats](http://ufcstats.com/statistics/fighters)")
 
 # Load model
 @st.cache_resource
