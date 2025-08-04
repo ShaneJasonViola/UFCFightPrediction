@@ -20,10 +20,15 @@ model = load_model()
 st.title("UFC Fight Outcome Predictor")
 st.markdown("Enter both fighters' statistics below. The app will predict the winner.")
 
-#Resources to look up information
-st.markdown("## Resources")
-st.markdown("- 🗓️ [Upcoming UFC Events](https://www.ufc.com/events)")
-st.markdown("- 🥋 [UFC Fighter Statistics](http://ufcstats.com/statistics/fighters)")
+st.markdown("## Resources to Look Up Information")
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.markdown("🗓️ [Upcoming UFC Events](https://www.ufc.com/events)")
+
+with col2:
+    st.markdown("🥋 [UFC Fighter Statistics](http://ufcstats.com/statistics/fighters)")
 
 # Form for user input
 with st.form("fight_input_form"):
