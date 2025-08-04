@@ -13,7 +13,7 @@ model = load_model()
 
 # Title
 st.title("UFC Fight Outcome Predictor")
-st.markdown("Enter both fighters' statistics below. The app will calculate derived features and predict the winner.")
+st.markdown("Enter both fighters' statistics below. The app will predict the winner.")
 
 # Form for user input
 with st.form("fight_input_form"):
@@ -82,7 +82,7 @@ indices = np.argsort(importances)[::-1]
 feature_names_sorted = np.array(features)[indices]
 
 # Plot in Streamlit
-st.subheader("🔍 Feature Importances")
+st.subheader(" Feature Importances")
 fig, ax = plt.subplots(figsize=(10, 6))
 ax.bar(range(len(importances)), importances[indices], align="center")
 ax.set_xticks(range(len(importances)))
