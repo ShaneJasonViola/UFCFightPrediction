@@ -21,7 +21,7 @@ st.title("UFC Fight Outcome Predictor")
 st.markdown("Enter both fighters' statistics below. The app will predict the winner.")
 
 #Resources to look up information
-st.markdown("## External Resources")
+st.markdown("## Resources")
 st.markdown("- 🗓️ [Upcoming UFC Events](https://www.ufc.com/events)")
 st.markdown("- 🥋 [UFC Fighter Statistics](http://ufcstats.com/statistics/fighters)")
 
