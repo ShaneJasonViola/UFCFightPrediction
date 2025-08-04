@@ -25,8 +25,9 @@ with st.form("fight_input_form"):
         red_td_landed = st.number_input("Red Avg TD Landed", min_value=0.0, value=1.5)
         red_sig_str_pct = st.number_input("Red Sig Str % (0-1)", min_value=0.0, max_value=1.0, value=0.45)
         red_odds = st.number_input("Red Odds", value=-120.0)
-        red_reach = st.number_input("Red Reach (cm)", min_value=100.0, max_value=250.0, value=180.0)
-
+        red_reach_in = st.number_input("Red Reach (inches)", min_value=30.0, max_value=100.0, value=71.0)
+        red_reach = red_reach_in * 2.54 # Convert to CM
+        
     with col2:
         st.subheader("Blue Fighter Stats")
         blue_age = st.number_input("Blue Age", min_value=18, max_value=60, value=30)
@@ -36,7 +37,9 @@ with st.form("fight_input_form"):
         blue_sig_str_pct = st.number_input("Blue Sig Str % (0-1)", min_value=0.0, max_value=1.0, value=0.43)
         blue_odds = st.number_input("Blue Odds", value=110.0)
         blue_reach = st.number_input("Blue Reach (cm)", min_value=100.0, max_value=250.0, value=185.0)
-
+        blue_reach_in = st.number_input("Blue Reach (inches)", min_value=30.0, max_value=100.0, value=71.0)
+        blue_reach = blue_reach_in * 2.54 # Convert to CM
+        
     submitted = st.form_submit_button("Predict Winner")
 
 # Prediction logic
