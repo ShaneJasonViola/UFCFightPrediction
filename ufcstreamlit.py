@@ -1,6 +1,8 @@
 import streamlit as st
 import numpy as np
 import joblib
+import matplotlib.pyplot as plt
+
 
 # Load model
 @st.cache_resource
@@ -66,16 +68,17 @@ if submitted:
     st.write(f"Predicted Winner: **{winner}**")
     st.write(f"Prediction Confidence: **{confidence:.2f}%**")
 
-# -------------------------------
-# Plot feature importances
-importances = rf.feature_importances_
-feature_names = df[features].columns
+importances = model.feature_importances_
 indices = np.argsort(importances)[::-1]
+feature_names_sorted = np.array(features)[indices]
 
-plt.figure(figsize=(10, 6))
-plt.title("Feature Importances - Random Forest")
-plt.bar(range(len(importances)), importances[indices], align="center")
-plt.xticks(range(len(importances)), feature_names[indices], rotation=45, ha='right')
-plt.ylabel("Importance Score")
+# Plot in Streamlit
+st.subheader("Feature Importances")
+fig, ax = plt.subplots(figsize=(10, 6))
+ax.bar(range(len(importances)), importances[indices], align="center")
+ax.set_xticks(range(len(importances)))
+ax.set_xticklabels(feature_names_sorted, rotation=45, ha='right')
+ax.set_title("Feature Importances - Random Forest")
+ax.set_ylabel("Importance Score")
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
