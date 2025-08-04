@@ -115,30 +115,26 @@ st.pyplot(fig)
 
 
 
-
-# Total number of fights observed
+# Static win totals (replace with your real data)
 total_fights = 6528
-
-# Static win data (replace with your actual numbers if needed)
 ko_wins = 2205
 sub_wins = 1313
-decision_wins = total_fights - (ko_wins + sub_wins)  
+decision_wins = total_fights - (ko_wins + sub_wins)
 
-# Create DataFrame
+# Prepare data
 win_data = pd.DataFrame({
     'Method': ['KO', 'Submission', 'Decision'],
     'Wins': [ko_wins, sub_wins, decision_wins]
 })
 
-# Convert to % of total fights
 win_data['Percentage'] = (win_data['Wins'] / total_fights) * 100
 
 # Plot
-st.subheader("Win Method Distribution (% of All Fights)")
+st.subheader("Win Method Distribution (% of All UFC Fights)")
 fig, ax = plt.subplots(figsize=(8, 6))
 bars = ax.bar(win_data['Method'], win_data['Percentage'], color=['crimson', 'darkblue', 'gray'])
 
-# Add percentage labels above bars
+# Add percentage labels
 for bar in bars:
     height = bar.get_height()
     ax.text(bar.get_x() + bar.get_width()/2.0, height + 0.8, f'{height:.1f}%', ha='center', va='bottom', fontsize=12)
