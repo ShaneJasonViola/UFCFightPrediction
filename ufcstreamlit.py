@@ -68,12 +68,21 @@ if submitted:
     st.write(f"Predicted Winner: **{winner}**")
     st.write(f"Prediction Confidence: **{confidence:.2f}%**")
 
+features = [
+    'RedOdds', 'BlueOdds', 'BlueAge', 'RedAge', 'AgeDif',
+    'RedWinLossRatio', 'BlueWinLossRatio',
+    'RedAvgTDLanded', 'BlueAvgTDLanded',
+    'RedAvgSigStrPct', 'BlueAvgSigStrPct',
+    'ReachDif'
+]
+
+# Get importances and sort
 importances = model.feature_importances_
 indices = np.argsort(importances)[::-1]
 feature_names_sorted = np.array(features)[indices]
 
 # Plot in Streamlit
-st.subheader("Feature Importances")
+st.subheader("🔍 Feature Importances")
 fig, ax = plt.subplots(figsize=(10, 6))
 ax.bar(range(len(importances)), importances[indices], align="center")
 ax.set_xticks(range(len(importances)))
