@@ -36,7 +36,6 @@ with st.form("fight_input_form"):
         blue_td_landed = st.number_input("Blue Avg TD Landed", min_value=0.0, value=1.2)
         blue_sig_str_pct = st.number_input("Blue Sig Str % (0-1)", min_value=0.0, max_value=1.0, value=0.43)
         blue_odds = st.number_input("Blue Odds", value=110.0)
-        blue_reach = st.number_input("Blue Reach (cm)", min_value=100.0, max_value=250.0, value=185.0)
         blue_reach_in = st.number_input("Blue Reach (inches)", min_value=30.0, max_value=100.0, value=71.0)
         blue_reach = blue_reach_in * 2.54 # Convert to CM
         
