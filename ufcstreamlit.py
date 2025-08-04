@@ -114,44 +114,36 @@ st.pyplot(fig)
 
 
 
-import streamlit as st
-import pandas as pd
-import matplotlib.pyplot as plt
 
-# Static win data (replace with your actual numbers if different)
-ko_wins = 340
-sub_wins = 202
-decision_wins = 463
 
-# Create DataFrame for plotting
+# Total number of fights observed
+total_fights = 6528
+
+# Static win data (replace with your actual numbers if needed)
+ko_wins = 2205
+sub_wins = 1313
+decision_wins = total_fights - (ko_wins + sub_wins)  
+
+# Create DataFrame
 win_data = pd.DataFrame({
     'Method': ['KO', 'Submission', 'Decision'],
     'Wins': [ko_wins, sub_wins, decision_wins]
 })
 
-# Convert to percentages
-win_data['Percentage'] = (win_data['Wins'] / win_data['Wins'].sum()) * 100
+# Convert to % of total fights
+win_data['Percentage'] = (win_data['Wins'] / total_fights) * 100
 
 # Plot
-st.subheader("Win Method Distribution (KO vs Submission vs Decision)")
+st.subheader("Win Method Distribution (% of All Fights)")
 fig, ax = plt.subplots(figsize=(8, 6))
 bars = ax.bar(win_data['Method'], win_data['Percentage'], color=['crimson', 'darkblue', 'gray'])
 
-# Add percentage labels
+# Add percentage labels above bars
 for bar in bars:
     height = bar.get_height()
-    ax.text(bar.get_x() + bar.get_width()/2.0, height + 1, f'{height:.1f}%', ha='center', va='bottom', fontsize=12)
+    ax.text(bar.get_x() + bar.get_width()/2.0, height + 0.8, f'{height:.1f}%', ha='center', va='bottom', fontsize=12)
 
 ax.set_ylim(0, 100)
-ax.set_ylabel('Percentage of Total Wins')
-ax.set_title('Win Method Distribution (KO vs Submission vs Decision)')
+ax.set_ylabel('Percentage of All Fights')
+ax.set_title('Win Method Distribution Across 6,528 UFC Fights')
 st.pyplot(fig)
-
-
-
-
-
-# Show in Streamlit
-st.subheader("Win Method Distribution")
-st.pyplot(fig)
-
