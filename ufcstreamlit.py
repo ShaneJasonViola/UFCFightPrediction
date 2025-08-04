@@ -100,8 +100,8 @@ st.pyplot(fig)
 st.subheader("Confusion Matrix - Random Forest")
 
 # Static example confusion matrix
-static_cm = np.array([[35, 5],
-                      [7, 53]])
+static_cm = np.array([[602, 348],
+                      [332,677]])
 
 fig, ax = plt.subplots(figsize=(6, 4))
 sns.heatmap(static_cm, annot=True, fmt='d', cmap='Blues',
