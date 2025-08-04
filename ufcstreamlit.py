@@ -114,36 +114,42 @@ st.pyplot(fig)
 
 
 
+import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
 
+# Static win data (replace with your actual numbers if different)
+ko_wins = 340
+sub_wins = 202
+decision_wins = 463
 
-
-# Calculate total wins by method
-ko_wins = df['RedWinsByKO'].sum() + df['BlueWinsByKO'].sum()
-sub_wins = df['RedWinsBySubmission'].sum() + df['BlueWinsBySubmission'].sum()
-total_wins = df['RedWins'].sum() + df['BlueWins'].sum()
-decision_wins = total_wins - (ko_wins + sub_wins)
-
-# Prepare data for plotting
+# Create DataFrame for plotting
 win_data = pd.DataFrame({
     'Method': ['KO', 'Submission', 'Decision'],
     'Wins': [ko_wins, sub_wins, decision_wins]
 })
+
+# Convert to percentages
 win_data['Percentage'] = (win_data['Wins'] / win_data['Wins'].sum()) * 100
 
-# Plot using matplotlib inside Streamlit
+# Plot
+st.subheader("Win Method Distribution (KO vs Submission vs Decision)")
 fig, ax = plt.subplots(figsize=(8, 6))
 bars = ax.bar(win_data['Method'], win_data['Percentage'], color=['crimson', 'darkblue', 'gray'])
 
 # Add percentage labels
 for bar in bars:
     height = bar.get_height()
-    ax.text(bar.get_x() + bar.get_width() / 2, height + 1, f'{height:.1f}%', 
-            ha='center', va='bottom', fontsize=12)
+    ax.text(bar.get_x() + bar.get_width()/2.0, height + 1, f'{height:.1f}%', ha='center', va='bottom', fontsize=12)
 
 ax.set_ylim(0, 100)
 ax.set_ylabel('Percentage of Total Wins')
 ax.set_title('Win Method Distribution (KO vs Submission vs Decision)')
-plt.tight_layout()
+st.pyplot(fig)
+
+
+
+
 
 # Show in Streamlit
 st.subheader("Win Method Distribution")
