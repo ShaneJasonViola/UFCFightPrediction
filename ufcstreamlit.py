@@ -65,20 +65,17 @@ if submitted:
     st.subheader("Prediction Result")
     st.write(f"Predicted Winner: **{winner}**")
     st.write(f"Prediction Confidence: **{confidence:.2f}%**")
+
 # -------------------------------
-# Dashboard - Optional Chart
-# -------------------------------
-st.markdown("---")
-st.subheader("📈 UFC Win Method Distribution (Sample Chart)")
-try:
-    data = pd.DataFrame({
-        "Method": ["KO", "Submission", "Decision"],
-        "Percentage": [42, 26, 32]
-    })
-    fig, ax = plt.subplots()
-    sns.barplot(data=data, x="Method", y="Percentage", ax=ax)
-    ax.set_title("Win Method Distribution")
-    st.pyplot(fig)
-except Exception as e:
-    st.error("Could not generate visualization:")
-    st.text(traceback.format_exc())
+# Plot feature importances
+importances = rf.feature_importances_
+feature_names = df[features].columns
+indices = np.argsort(importances)[::-1]
+
+plt.figure(figsize=(10, 6))
+plt.title("Feature Importances - Random Forest")
+plt.bar(range(len(importances)), importances[indices], align="center")
+plt.xticks(range(len(importances)), feature_names[indices], rotation=45, ha='right')
+plt.ylabel("Importance Score")
+plt.tight_layout()
+plt.show()
