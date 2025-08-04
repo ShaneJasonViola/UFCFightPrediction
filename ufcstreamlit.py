@@ -109,7 +109,7 @@ sns.heatmap(static_cm, annot=True, fmt='d', cmap='Blues',
             xticklabels=['Loss', 'Win'], yticklabels=['Loss', 'Win'], ax=ax)
 ax.set_xlabel('Predicted Label')
 ax.set_ylabel('True Label')
-ax.set_title('Confusion Matrix (Sample)')
+ax.set_title('Confusion Matrix (Testing Data)')
 plt.tight_layout()
 st.pyplot(fig)
 
