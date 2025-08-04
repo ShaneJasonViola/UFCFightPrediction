@@ -97,16 +97,17 @@ st.pyplot(fig)
 
 
 # Predict and calculate confusion matrix
-y_pred_rf = rf.predict(x_test)
-cm_rf = confusion_matrix(y_test, y_pred_rf)
-
-# Plot confusion matrix
 st.subheader("Confusion Matrix - Random Forest")
+
+# Static example confusion matrix
+static_cm = np.array([[35, 5],
+                      [7, 53]])
+
 fig, ax = plt.subplots(figsize=(6, 4))
-sns.heatmap(cm_rf, annot=True, fmt='d', cmap='Blues',
+sns.heatmap(static_cm, annot=True, fmt='d', cmap='Blues',
             xticklabels=['Loss', 'Win'], yticklabels=['Loss', 'Win'], ax=ax)
 ax.set_xlabel('Predicted Label')
 ax.set_ylabel('True Label')
-ax.set_title('Confusion Matrix - Random Forest')
+ax.set_title('Confusion Matrix (Sample)')
 plt.tight_layout()
 st.pyplot(fig)
