@@ -111,3 +111,41 @@ ax.set_ylabel('True Label')
 ax.set_title('Confusion Matrix (Sample)')
 plt.tight_layout()
 st.pyplot(fig)
+
+
+
+
+
+
+# Calculate total wins by method
+ko_wins = df['RedWinsByKO'].sum() + df['BlueWinsByKO'].sum()
+sub_wins = df['RedWinsBySubmission'].sum() + df['BlueWinsBySubmission'].sum()
+total_wins = df['RedWins'].sum() + df['BlueWins'].sum()
+decision_wins = total_wins - (ko_wins + sub_wins)
+
+# Prepare data for plotting
+win_data = pd.DataFrame({
+    'Method': ['KO', 'Submission', 'Decision'],
+    'Wins': [ko_wins, sub_wins, decision_wins]
+})
+win_data['Percentage'] = (win_data['Wins'] / win_data['Wins'].sum()) * 100
+
+# Plot using matplotlib inside Streamlit
+fig, ax = plt.subplots(figsize=(8, 6))
+bars = ax.bar(win_data['Method'], win_data['Percentage'], color=['crimson', 'darkblue', 'gray'])
+
+# Add percentage labels
+for bar in bars:
+    height = bar.get_height()
+    ax.text(bar.get_x() + bar.get_width() / 2, height + 1, f'{height:.1f}%', 
+            ha='center', va='bottom', fontsize=12)
+
+ax.set_ylim(0, 100)
+ax.set_ylabel('Percentage of Total Wins')
+ax.set_title('Win Method Distribution (KO vs Submission vs Decision)')
+plt.tight_layout()
+
+# Show in Streamlit
+st.subheader("Win Method Distribution")
+st.pyplot(fig)
+
