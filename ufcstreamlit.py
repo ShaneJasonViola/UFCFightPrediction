@@ -36,26 +36,26 @@ with st.form("fight_input_form"):
 
     with col1:
         st.subheader("Red Fighter Stats")
-        red_age = st.number_input("Red Age", min_value=18, max_value=60, value=28)
-        red_wins = st.number_input("Red Wins", min_value=0, value=10)
-        red_losses = st.number_input("Red Losses", min_value=0, value=5)
+        red_age = st.number_input("Red Age", min_value=18, max_value=60, value=28, step=1)
+        red_wins = st.number_input("Red Wins", min_value=0, value=10, step=1)
+        red_losses = st.number_input("Red Losses", min_value=0, value=5, step=1)
         red_td_landed = st.number_input("Red Avg TD Landed", min_value=0.0, value=1.5)
         red_sig_str_pct = st.number_input("Red Sig Str % (0-1)", min_value=0.0, max_value=1.0, value=0.45)
-        red_odds = st.number_input("Red Odds", value=-120.0)
-        red_reach_in = st.number_input("Red Reach (inches)", min_value=30.0, max_value=100.0, value=71.0)
-        red_reach = red_reach_in * 2.54 # Convert to CM
-        
+        red_odds = st.number_input("Red Odds", value=-120.0)  # Can be negative
+        red_reach_in = st.number_input("Red Reach (inches)", min_value=48, max_value=100, value=71, step=1, format="%d")
+        red_reach = red_reach_in * 2.54  # convert to cm
+
     with col2:
         st.subheader("Blue Fighter Stats")
-        blue_age = st.number_input("Blue Age", min_value=18, max_value=60, value=30)
-        blue_wins = st.number_input("Blue Wins", min_value=0, value=12)
-        blue_losses = st.number_input("Blue Losses", min_value=0, value=6)
+        blue_age = st.number_input("Blue Age", min_value=18, max_value=60, value=30, step=1)
+        blue_wins = st.number_input("Blue Wins", min_value=0, value=12, step=1)
+        blue_losses = st.number_input("Blue Losses", min_value=0, value=6, step=1)
         blue_td_landed = st.number_input("Blue Avg TD Landed", min_value=0.0, value=1.2)
         blue_sig_str_pct = st.number_input("Blue Sig Str % (0-1)", min_value=0.0, max_value=1.0, value=0.43)
-        blue_odds = st.number_input("Blue Odds", value=110.0)
-        blue_reach_in = st.number_input("Blue Reach (inches)", min_value=30.0, max_value=100.0, value=71.0)
-        blue_reach = blue_reach_in * 2.54 # Convert to CM
-        
+        blue_odds = st.number_input("Blue Odds", value=110.0)  # Can be negative
+        blue_reach_in = st.number_input("Blue Reach (inches)", min_value=48, max_value=100, value=71, step=1, format="%d")
+        blue_reach = blue_reach_in * 2.54  # convert to cm
+
     submitted = st.form_submit_button("Predict Winner")
 
 # Prediction logic
