@@ -85,32 +85,7 @@ if submitted:
     st.write(f"Predicted Winner: **{winner}**")
     st.write(f"Prediction Confidence: **{confidence:.2f}%**")
 
-# Feature Importances (safely wrapped in try/except)
-try:
-    features = [
-        'RedOdds', 'BlueOdds', 'BlueAge', 'RedAge', 'AgeDif',
-        'RedWinLossRatio', 'BlueWinLossRatio',
-        'RedAvgTDLanded', 'BlueAvgTDLanded',
-        'RedAvgSigStrPct', 'BlueAvgSigStrPct',
-        'ReachDif'
-    ]
 
-    importances = model.feature_importances_
-    indices = np.argsort(importances)[::-1]
-    feature_names_sorted = np.array(features)[indices]
-
-    st.subheader("Feature Importances")
-    fig, ax = plt.subplots(figsize=(10, 6))
-    ax.bar(range(len(importances)), importances[indices], align="center")
-    ax.set_xticks(range(len(importances)))
-    ax.set_xticklabels(feature_names_sorted, rotation=45, ha='right')
-    ax.set_title("Feature Importances - Random Forest")
-    ax.set_ylabel("Importance Score")
-    plt.tight_layout()
-    st.pyplot(fig)
-
-except Exception as e:
-    st.error(f"Could not generate feature importances. Reason: {str(e)}")
 
 # Load dataset from your repo directory
 @st.cache_resource
@@ -143,6 +118,33 @@ if available_features:
 else:
     st.warning("None of the specified features were found in the dataset.")
 
+# Feature Importances 
+try:
+    features = [
+        'RedOdds', 'BlueOdds', 'BlueAge', 'RedAge', 'AgeDif',
+        'RedWinLossRatio', 'BlueWinLossRatio',
+        'RedAvgTDLanded', 'BlueAvgTDLanded',
+        'RedAvgSigStrPct', 'BlueAvgSigStrPct',
+        'ReachDif'
+    ]
+
+    importances = model.feature_importances_
+    indices = np.argsort(importances)[::-1]
+    feature_names_sorted = np.array(features)[indices]
+
+    st.subheader("Feature Importances")
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.bar(range(len(importances)), importances[indices], align="center")
+    ax.set_xticks(range(len(importances)))
+    ax.set_xticklabels(feature_names_sorted, rotation=45, ha='right')
+    ax.set_title("Feature Importances - Random Forest")
+    ax.set_ylabel("Importance Score")
+    plt.tight_layout()
+    st.pyplot(fig)
+
+except Exception as e:
+    st.error(f"Could not generate feature importances. Reason: {str(e)}")
+    
 # Confusion Matrix (Static Example)
 st.subheader("Confusion Matrix - Random Forest")
 static_cm = np.array([[602, 348], [332, 677]])
