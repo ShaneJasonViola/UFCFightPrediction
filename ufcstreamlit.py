@@ -249,7 +249,7 @@ ax.set_ylabel('Percentage of Total Fights')
 ax.set_title('Win Method Distribution (KO vs Submission vs Decision)')
 st.pyplot(fig)
 
-X = df[model_features]  # Replace model_features with your actual feature list
+x = df[model_features]  # Replace model_features with your actual feature list
 scaler = StandardScaler()
 x_scaled = scaler.fit_transform(X)
 
