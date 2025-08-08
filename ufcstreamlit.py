@@ -112,10 +112,10 @@ try:
 except Exception as e:
     st.error(f"Could not generate feature importances. Reason: {str(e)}")
 
-# Load your dataset once (modify path as needed)
+# Load  dataset 
 @st.cache_data
 def load_data():
-    return pd.read_csv("your_ufc_data.csv")  # replace with your actual file
+    return pd.read_csv("ufc_master.csv")  
 
 df = load_data()
 
