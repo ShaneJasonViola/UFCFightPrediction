@@ -112,28 +112,7 @@ try:
 except Exception as e:
     st.error(f"Could not generate feature importances. Reason: {str(e)}")
 
-# Load  dataset 
-@st.cache_data
-def load_data():
-    return pd.read_csv("ufc_master.csv")  
 
-df = load_data()
-
-# Selected features
-features = [
-    'RedOdds', 'BlueOdds', 'BlueAge', 'RedAge', 'AgeDif',
-    'RedWinLossRatio', 'BlueWinLossRatio',
-    'RedAvgTDLanded', 'BlueAvgTDLanded',
-    'RedAvgSigStrPct', 'BlueAvgSigStrPct',
-    'ReachDif'
-]
-
-# Check if all required columns exist
-missing = [col for col in features if col not in df.columns]
-if missing:
-    st.error(f"Missing columns in dataset: {missing}")
-else:
-    st.subheader("🔍 Correlation Heatmap of Selected UFC Features")
     
     # Compute correlation matrix
     corr_matrix = df[features].corr()
