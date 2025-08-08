@@ -250,6 +250,13 @@ ax.set_title('Win Method Distribution (KO vs Submission vs Decision)')
 st.pyplot(fig)
 
 # Elbow Method
+from sklearn.datasets import make_blobs
+from sklearn.preprocessing import StandardScaler
+
+X, _ = make_blobs(n_samples=300, centers=5, random_state=42)
+x_scaled = StandardScaler().fit_transform(X)
+
+# Elbow Method
 st.subheader("Elbow Method for Optimal k")
 inertia = []
 K = range(1, 15)
@@ -259,12 +266,10 @@ for k in K:
     kmeans.fit(x_scaled)
     inertia.append(kmeans.inertia_)
 
-# Plot in Streamlit
 fig, ax = plt.subplots(figsize=(10, 6))
 ax.plot(K, inertia, 'bx-')
 ax.set_xlabel('k')
 ax.set_ylabel('Sum of Squared Distances (Inertia)')
 ax.set_title('Elbow Method For Optimal k')
 ax.grid(True)
-
 st.pyplot(fig)
