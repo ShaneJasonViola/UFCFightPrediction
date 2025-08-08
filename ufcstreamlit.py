@@ -112,25 +112,7 @@ try:
 except Exception as e:
     st.error(f"Could not generate feature importances. Reason: {str(e)}")
     
-# Correlation Heatmap Features
-    features = [
-    'RedWinLossRatio', 'BlueAge', 'RedAvgTDLanded', 'RedAvgSigStrPct', 'RedAvgTDPct',
-    'RedAvgSubAtt', 'SubAttDif', 'RedWinsBySubmission', 'ReachDif',
-    'RedAvgSigStrLanded', 'SubPctDiff', 'AgeDif', 'BlueTotalFights',
-    'RedWins', 'TDPctDiff', 'SigStrPctDif', 'KOPctDiff',
-    'BlueAvgSigStrPct', 'BlueAvgTDLanded', 'RedAge', 'BlueOdds', 'RedOdds', 'BlueWinLossRatio',
-    'WinnerBinary'  # Assuming this is your target
-]
 
-# Remove duplicates if any
-clean_features = list(dict.fromkeys(features))
-
-# Create heatmap
-st.subheader("Correlation Heatmap of Features")
-fig, ax = plt.subplots(figsize=(10, 8))
-sns.heatmap(df[clean_features].corr(), annot=True, fmt=".1f", cmap="coolwarm", ax=ax)
-plt.title("Correlation Heatmap of Features")
-st.pyplot(fig)
     
     # Compute correlation matrix
     corr_matrix = df[features].corr()
