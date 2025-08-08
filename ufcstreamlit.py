@@ -111,8 +111,41 @@ try:
 
 except Exception as e:
     st.error(f"Could not generate feature importances. Reason: {str(e)}")
-    
 
+#Correlation Matrix
+@st.cache_data
+def load_data():
+    return pd.read_csv("ufc_data.csv")  # <-- Make sure this file exists or adjust the path
+
+df = load_data()
+
+# Define features
+features = [
+    'RedWinLossRatio', 'BlueAge', 'RedAvgTDLanded', 'RedAvgSigStrPct', 'RedAvgTDPct',
+    'RedAvgSubAtt', 'SubAttDif', 'RedWinsBySubmission', 'ReachDif',
+    'RedAvgSigStrLanded', 'SubPctDiff', 'AgeDif', 'BlueTotalFights',
+    'RedWins', 'TDPctDiff', 'SigStrPctDif', 'KOPctDiff',
+    'BlueAvgSigStrPct', 'BlueAvgTDLanded', 'RedAge', 'BlueOdds', 'RedOdds', 'BlueWinLossRatio',
+    'WinnerBinary'
+]
+
+# Remove missing features safely
+available_features = [col for col in features if col in df.columns]
+
+# Warn if any columns are missing
+missing = set(features) - set(available_features)
+if missing:
+    st.warning(f"Missing columns in dataset: {missing}")
+
+# Create heatmap only if we have enough features
+if len(available_features) >= 2:
+    st.subheader("Correlation Heatmap of Features")
+    fig, ax = plt.subplots(figsize=(10, 8))
+    sns.heatmap(df[available_features].corr(), annot=True, fmt=".1f", cmap="coolwarm", ax=ax)
+    ax.set_title("Correlation Heatmap of Features")
+    st.pyplot(fig)
+else:
+    st.error("Not enough features available to plot heatmap.")
     
     # Compute correlation matrix
     corr_matrix = df[features].corr()
