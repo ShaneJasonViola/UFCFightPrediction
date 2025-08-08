@@ -249,47 +249,41 @@ ax.set_ylabel('Percentage of Total Fights')
 ax.set_title('Win Method Distribution (KO vs Submission vs Decision)')
 st.pyplot(fig)
 
-# Title
 st.title("Elbow Method for Optimal k")
 
 # Load your data
-@st.cache_data
-def load_data():
-    return pd.read_csv("ufc-master.csv")  # Ensure this file exists in your repo
+df = pd.read_csv("ufc-master.csv")  # Replace with your actual CSV path
 
-df = load_data()
+# Derive missing columns (make sure the base columns exist)
+try:
+    df['TDLandedDiff'] = df['RedAvgTDLanded'] - df['BlueAvgTDLanded']
+    df['SigStrPctDiff'] = df['RedAvgSigStrPct'] - df['BlueAvgSigStrPct']
+    df['WinStreakDiff'] = df['RedWinStreak'] - df['BlueWinStreak']
+except KeyError as e:
+    st.error(f"Missing columns in dataset: {e}")
+    st.stop()
 
-# Define features used for clustering
-model_features = [
-    'AgeDif', 'ReachDif', 'TDLandedDiff', 'SigStrPctDiff', 'WinStreakDiff'
-]  # Use actual feature names your model was trained on
+# Select features to use in KMeans clustering
+features = ['TDLandedDiff', 'SigStrPctDiff', 'WinStreakDiff']
+X = df[features].dropna()  # Drop rows with missing values
 
-# Ensure all features exist
-missing = [col for col in model_features if col not in df.columns]
-if missing:
-    st.error(f"Missing columns in dataset: {missing}")
-else:
-    # Drop rows with missing values in selected features
-    df_clean = df.dropna(subset=model_features)
+# Scale the data
+scaler = StandardScaler()
+x_scaled = scaler.fit_transform(X)
 
-    # Scale the features
-    scaler = StandardScaler()
-    x_scaled = scaler.fit_transform(df_clean[model_features])
+# Elbow Method: Calculate inertia for k=1 to 14
+inertia = []
+K = range(1, 15)
+for k in K:
+    kmeans = KMeans(n_clusters=k, random_state=42)
+    kmeans.fit(x_scaled)
+    inertia.append(kmeans.inertia_)
 
-    # Elbow Method logic
-    inertia = []
-    K = range(1, 15)
-    for k in K:
-        kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)
-        kmeans.fit(x_scaled)
-        inertia.append(kmeans.inertia_)
-
-    # Plot Elbow Curve
-    fig, ax = plt.subplots(figsize=(10, 6))
-    ax.plot(K, inertia, 'bx-')
-    ax.set_xlabel('k')
-    ax.set_ylabel('Sum of Squared Distances (Inertia)')
-    ax.set_title('Elbow Method For Optimal k')
-    ax.grid(True)
-
-    st.pyplot(fig)
+# Plot the Elbow Curve in Streamlit
+fig, ax = plt.subplots(figsize=(10, 6))
+ax.plot(K, inertia, 'bx-')
+ax.set_xlabel('k')
+ax.set_ylabel('Sum of Squared Distances (Inertia)')
+ax.set_title('Elbow Method For Optimal k')
+ax.grid(True)
+st.pyplot(fig)
