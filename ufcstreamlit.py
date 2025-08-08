@@ -252,27 +252,38 @@ st.pyplot(fig)
 
 st.title("Elbow Method for Optimal k")
 
-# Load your data
-df = pd.read_csv("ufc-master.csv")  # Replace with your actual CSV path
+# Load data
+df = pd.read_csv("ufc-master.csv")  # Replace with your actual file
 
-# Derive missing columns (make sure the base columns exist)
-try:
-    df['TDLandedDiff'] = df['RedAvgTDLanded'] - df['BlueAvgTDLanded']
-    df['SigStrPctDiff'] = df['RedAvgSigStrPct'] - df['BlueAvgSigStrPct']
-    df['WinStreakDiff'] = df['RedWinStreak'] - df['BlueWinStreak']
-except KeyError as e:
-    st.error(f"Missing columns in dataset: {e}")
+# ---- Check & Create Required Columns ----
+missing_base_cols = []
+base_cols = [
+    'RedAvgTDLanded', 'BlueAvgTDLanded',
+    'RedAvgSigStrPct', 'BlueAvgSigStrPct',
+    'RedWinStreak', 'BlueWinStreak'
+]
+
+for col in base_cols:
+    if col not in df.columns:
+        missing_base_cols.append(col)
+
+if missing_base_cols:
+    st.error(f"Missing base columns in dataset: {missing_base_cols}")
     st.stop()
 
-# Select features to use in KMeans clustering
-features = ['TDLandedDiff', 'SigStrPctDiff', 'WinStreakDiff']
-X = df[features].dropna()  # Drop rows with missing values
+# Derive columns
+df['TDLandedDiff'] = df['RedAvgTDLanded'] - df['BlueAvgTDLanded']
+df['SigStrPctDiff'] = df['RedAvgSigStrPct'] - df['BlueAvgSigStrPct']
+df['WinStreakDiff'] = df['RedWinStreak'] - df['BlueWinStreak']
 
-# Scale the data
+# ---- KMeans Clustering ----
+features = ['TDLandedDiff', 'SigStrPctDiff', 'WinStreakDiff']
+X = df[features].dropna()
+
 scaler = StandardScaler()
 x_scaled = scaler.fit_transform(X)
 
-# Elbow Method: Calculate inertia for k=1 to 14
+# Compute inertia
 inertia = []
 K = range(1, 15)
 for k in K:
@@ -280,7 +291,7 @@ for k in K:
     kmeans.fit(x_scaled)
     inertia.append(kmeans.inertia_)
 
-# Plot the Elbow Curve in Streamlit
+# ---- Plot Elbow Curve ----
 fig, ax = plt.subplots(figsize=(10, 6))
 ax.plot(K, inertia, 'bx-')
 ax.set_xlabel('k')
