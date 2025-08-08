@@ -175,7 +175,7 @@ metrics = ['Accuracy', 'Precision', 'Recall', 'F1 Score']
 
 # Streamlit UI
 
-st.title("🔍 UFC Model Evaluation Dashboard")
+st.title("UFC Model Evaluation Dashboard")
 
 # Toggle between Train and Test
 data_type = st.radio("Select Data Type:", ["Test Set", "Train Set"])
