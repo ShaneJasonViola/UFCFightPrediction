@@ -112,31 +112,36 @@ try:
 except Exception as e:
     st.error(f"Could not generate feature importances. Reason: {str(e)}")
 
-# Upload CSV file through UI
-uploaded_file = st.file_uploader("Upload UFC data CSV", type=["csv"])
+# Load dataset from your repo directory
+@st.cache_resource
+def load_data():
+    return pd.read_csv("ufc-master.csv")
 
-if uploaded_file is not None:
-    df = pd.read_csv(uploaded_file)
+df = load_data()
 
-    features = [
-        'RedWinLossRatio', 'BlueAge', 'RedAvgTDLanded', 'RedAvgSigStrPct', 'RedAvgTDPct',
-        'RedAvgSubAtt', 'SubAttDif', 'RedWinsBySubmission', 'ReachDif',
-        'RedAvgSigStrLanded', 'SubPctDiff', 'AgeDif', 'BlueTotalFights',
-        'RedWins', 'TDPctDiff', 'SigStrPctDif', 'KOPctDiff',
-        'BlueAvgSigStrPct', 'BlueAvgTDLanded', 'RedAge', 'BlueOdds', 'RedOdds', 'BlueWinLossRatio',
-        'WinnerBinary'
-    ]
+# Define selected features
+features = [
+    'RedWinLossRatio', 'BlueAge', 'RedAvgTDLanded', 'RedAvgSigStrPct', 'RedAvgTDPct',
+    'RedAvgSubAtt', 'SubAttDif', 'RedWinsBySubmission', 'ReachDif',
+    'RedAvgSigStrLanded', 'SubPctDiff', 'AgeDif', 'BlueTotalFights',
+    'RedWins', 'TDPctDiff', 'SigStrPctDif', 'KOPctDiff',
+    'BlueAvgSigStrPct', 'BlueAvgTDLanded', 'RedAge', 'BlueOdds', 'RedOdds', 'BlueWinLossRatio',
+    'WinnerBinary'
+]
 
-    # Filter to available columns only
-    available_features = [col for col in features if col in df.columns]
+# Filter to available features in the DataFrame
+available_features = [f for f in features if f in df.columns]
 
-    st.subheader("Correlation Heatmap of Features")
-    fig, ax = plt.subplots(figsize=(10, 8))
-    sns.heatmap(df[available_features].corr(), annot=True, fmt=".1f", cmap="coolwarm", ax=ax)
+st.subheader("Correlation Heatmap of Selected UFC Features")
+
+if available_features:
+    fig, ax = plt.subplots(figsize=(12, 9))
+    corr_matrix = df[available_features].corr()
+    sns.heatmap(corr_matrix, annot=True, fmt=".1f", cmap="coolwarm", ax=ax)
     ax.set_title("Correlation Heatmap of Selected UFC Features")
     st.pyplot(fig)
 else:
-    st.info("Please upload your UFC dataset (CSV).")
+    st.warning("None of the specified features were found in the dataset.")
 
 # Confusion Matrix (Static Example)
 st.subheader("Confusion Matrix - Random Forest")
