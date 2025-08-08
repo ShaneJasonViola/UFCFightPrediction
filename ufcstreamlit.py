@@ -112,19 +112,39 @@ try:
 except Exception as e:
     st.error(f"Could not generate feature importances. Reason: {str(e)}")
 
-# Title
-st.subheader(" Correlation Heatmap of Selected UFC Features")
+# Load your dataset once (modify path as needed)
+@st.cache_data
+def load_data():
+    return pd.read_csv("your_ufc_data.csv")  # replace with your actual file
 
-# Compute correlation matrix
-corr_matrix = df[features].corr()
+df = load_data()
 
-# Plot using matplotlib and seaborn
-fig, ax = plt.subplots(figsize=(10, 8))
-sns.heatmap(corr_matrix, annot=True, fmt=".2f", cmap="coolwarm", ax=ax)
-ax.set_title("Correlation Heatmap of Selected Features", fontsize=14)
+# Selected features
+features = [
+    'RedOdds', 'BlueOdds', 'BlueAge', 'RedAge', 'AgeDif',
+    'RedWinLossRatio', 'BlueWinLossRatio',
+    'RedAvgTDLanded', 'BlueAvgTDLanded',
+    'RedAvgSigStrPct', 'BlueAvgSigStrPct',
+    'ReachDif'
+]
 
-# Display the heatmap in Streamlit
-st.pyplot(fig)
+# Check if all required columns exist
+missing = [col for col in features if col not in df.columns]
+if missing:
+    st.error(f"Missing columns in dataset: {missing}")
+else:
+    st.subheader("🔍 Correlation Heatmap of Selected UFC Features")
+    
+    # Compute correlation matrix
+    corr_matrix = df[features].corr()
+
+    # Plot using matplotlib and seaborn
+    fig, ax = plt.subplots(figsize=(10, 8))
+    sns.heatmap(corr_matrix, annot=True, fmt=".2f", cmap="coolwarm", ax=ax)
+    ax.set_title("Correlation Heatmap of Selected Features", fontsize=14)
+
+    # Show plot in Streamlit
+    st.pyplot(fig)
 
 # Confusion Matrix (Static Example)
 st.subheader("Confusion Matrix - Random Forest")
