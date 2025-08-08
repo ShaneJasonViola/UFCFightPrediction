@@ -145,9 +145,7 @@ try:
 except Exception as e:
     st.error(f"Could not generate feature importances. Reason: {str(e)}")
 
-# --------------------------
 # Model Performance Data
-# --------------------------
 
 train_data = {
     'LOG-R':      [0.6660, 0.67, 0.67, 0.67],
@@ -171,9 +169,7 @@ test_data = {
 
 metrics = ['Accuracy', 'Precision', 'Recall', 'F1 Score']
 
-# --------------------------
 # Streamlit UI
-# --------------------------
 
 st.title("🔍 UFC Model Evaluation Dashboard")
 
@@ -191,9 +187,7 @@ else:
 
 df = pd.DataFrame(selected_data, index=metrics)
 
-# --------------------------
 # Plotting
-# --------------------------
 
 st.subheader(f"Model Performance on {data_type}")
 
@@ -253,3 +247,22 @@ ax.set_ylabel('Percentage of Total Fights')
 ax.set_title('Win Method Distribution (KO vs Submission vs Decision)')
 st.pyplot(fig)
 
+# Elbow Method
+st.subheader("Elbow Method for Optimal k")
+inertia = []
+K = range(1, 15)
+
+for k in K:
+    kmeans = KMeans(n_clusters=k, random_state=42, n_init='auto')
+    kmeans.fit(x_scaled)
+    inertia.append(kmeans.inertia_)
+
+# Plot in Streamlit
+fig, ax = plt.subplots(figsize=(10, 6))
+ax.plot(K, inertia, 'bx-')
+ax.set_xlabel('k')
+ax.set_ylabel('Sum of Squared Distances (Inertia)')
+ax.set_title('Elbow Method For Optimal k')
+ax.grid(True)
+
+st.pyplot(fig)
