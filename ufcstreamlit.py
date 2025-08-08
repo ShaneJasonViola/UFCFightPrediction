@@ -249,21 +249,24 @@ ax.set_ylabel('Percentage of Total Fights')
 ax.set_title('Win Method Distribution (KO vs Submission vs Decision)')
 st.pyplot(fig)
 
-# Assuming x_scaled already exists
+X = df[model_features]  # Replace model_features with your actual feature list
+scaler = StandardScaler()
+x_scaled = scaler.fit_transform(X)
+
+# Elbow method
 inertia = []
 K = range(1, 15)
 
 for k in K:
-    kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)  # <-- FIXED HERE
+    kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)
     kmeans.fit(x_scaled)
     inertia.append(kmeans.inertia_)
 
-# Plotting in Streamlit
-st.subheader("Elbow Method for Optimal k")
-fig, ax = plt.subplots(figsize=(10, 6))
-ax.plot(K, inertia, 'bx-')
-ax.set_xlabel('k')
-ax.set_ylabel('Sum of Squared Distances (Inertia)')
-ax.set_title('Elbow Method For Optimal k')
-ax.grid(True)
-st.pyplot(fig)
+# Plotting the elbow chart
+plt.figure(figsize=(10, 6))
+plt.plot(K, inertia, 'bx-')
+plt.xlabel('k')
+plt.ylabel('Sum of Squared Distances (Inertia)')
+plt.title('Elbow Method For Optimal k')
+plt.grid(True)
+st.pyplot(plt)  # If you're in Streamlit
