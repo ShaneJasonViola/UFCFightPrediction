@@ -249,38 +249,19 @@ ax.set_ylabel('Percentage of Total Fights')
 ax.set_title('Win Method Distribution (KO vs Submission vs Decision)')
 st.pyplot(fig)
 
-# Elbow Method
-from sklearn.datasets import make_blobs
-from sklearn.preprocessing import StandardScaler
-
-X, _ = make_blobs(n_samples=300, centers=5, random_state=42)
-x_scaled = StandardScaler().fit_transform(X)
-
-# Load and scale your data (example with UFC data)
-df = pd.read_csv("ufc-master.csv")  # Or use your actual file path
-features = [
-    'RedWinLossRatio', 'BlueAge', 'RedAvgTDLanded', 'RedAvgSigStrPct',
-    'RedAvgTDPct', 'RedAvgSubAtt', 'SubAttDif', 'RedWinsBySubmission',
-    'ReachDif', 'RedAvgSigStrLanded', 'SubPctDiff', 'AgeDif', 'BlueTotalFights',
-    'RedWins', 'TDPctDiff', 'SigStrPctDif', 'KOPctDiff', 'BlueAvgSigStrPct',
-    'BlueAvgTDLanded', 'RedAge', 'BlueOdds', 'RedOdds', 'BlueWinLossRatio'
-]
-
-# Drop rows with missing values and scale
-df_clean = df[features].dropna()
-scaler = StandardScaler()
-x_scaled = scaler.fit_transform(df_clean)
-
-# Elbow Method calculation
+# Elbow Method for Optimal k
 inertia = []
 K = range(1, 15)
 
 for k in K:
-    kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)  # Use n_init=10 to avoid 'auto' error
+    kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)  # <- FIXED
     kmeans.fit(x_scaled)
     inertia.append(kmeans.inertia_)
 
 # Plotting the Elbow Curve in Streamlit
+import matplotlib.pyplot as plt
+import streamlit as st
+
 st.subheader("Elbow Method for Optimal k")
 fig, ax = plt.subplots(figsize=(10, 6))
 ax.plot(K, inertia, 'bx-')
