@@ -111,7 +111,18 @@ try:
 
 except Exception as e:
     st.error(f"Could not generate feature importances. Reason: {str(e)}")
+    
+# Correlation Heatmap Features
+    features = [
+    'RedWinLossRatio', 'BlueAge', 'RedAvgTDLanded', 'RedAvgSigStrPct', 'RedAvgTDPct',
+    'RedAvgSubAtt', 'SubAttDif', 'RedWinsBySubmission', 'ReachDif',
+    'RedAvgSigStrLanded', 'SubPctDiff', 'AgeDif', 'BlueTotalFights',
+    'RedWins', 'TDPctDiff', 'SigStrPctDif', 'KOPctDiff',
+    'BlueAvgSigStrPct', 'BlueAvgTDLanded', 'RedAge', 'BlueOdds', 'RedOdds', 'BlueWinLossRatio',
+    'WinnerBinary'  # Assuming this is your target
+]
 
+# Remove duplicates if any
 clean_features = list(dict.fromkeys(features))
 
 # Create heatmap
