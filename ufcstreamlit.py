@@ -50,7 +50,7 @@ with st.form("fight_input_form"):
         blue_reach = blue_reach_in * 2.54
 
     # Odds section with message
-    st.markdown("### ⚠️ Important Note About Odds")
+    st.markdown("### Important Note About Odds")
     st.warning("Odds are set to equal by default (+100). Changing them can significantly influence the model's prediction, as odds are a heavily weighted feature.")
 
     col1, col2 = st.columns(2)
@@ -111,6 +111,15 @@ try:
 
 except Exception as e:
     st.error(f"Could not generate feature importances. Reason: {str(e)}")
+
+clean_features = list(dict.fromkeys(features))
+
+# Create heatmap
+st.subheader("Correlation Heatmap of Features")
+fig, ax = plt.subplots(figsize=(10, 8))
+sns.heatmap(df[clean_features].corr(), annot=True, fmt=".1f", cmap="coolwarm", ax=ax)
+plt.title("Correlation Heatmap of Features")
+st.pyplot(fig)
 
 # Confusion Matrix (Static Example)
 st.subheader("Confusion Matrix - Random Forest")
