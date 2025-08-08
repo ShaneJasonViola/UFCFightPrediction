@@ -145,48 +145,76 @@ try:
 except Exception as e:
     st.error(f"Could not generate feature importances. Reason: {str(e)}")
 
-# Load data
-@st.cache_resource
-def load_data():
-    return pd.read_csv("ufc-master.csv")
-    
-# Load trained Random Forest model
-@st.cache_resource
-def load_model():
-    return joblib.load("random_forest_model (1).pkl")
+# --------------------------
+# Model Performance Data
+# --------------------------
 
-model = load_model()
+train_data = {
+    'LOG-R':      [0.6660, 0.67, 0.67, 0.67],
+    'GNB':        [0.6535, 0.65, 0.65, 0.65],
+    'DT':         [0.6772, 0.68, 0.68, 0.68],
+    'RF':         [0.8759, 0.88, 0.88, 0.88],
+    'SVM':        [0.6680, 0.67, 0.67, 0.67],
+    'KNN':        [0.6708, 0.67, 0.67, 0.67],
+    'KMeans_k=5': [None,   None, None, None]  # Not applicable for train
+}
 
-# Define input features used by the model
-model_features = [
-    'RedOdds', 'BlueOdds', 'BlueAge', 'RedAge', 'AgeDif',
-    'RedWinLossRatio', 'BlueWinLossRatio',
-    'RedAvgTDLanded', 'BlueAvgTDLanded',
-    'RedAvgSigStrPct', 'BlueAvgSigStrPct',
-    'ReachDif'
-]
+test_data = {
+    'LOG-R':      [0.6437, 0.64, 0.64, 0.64],
+    'GNB':        [0.6253, 0.63, 0.62, 0.63],
+    'DT':         [0.6269, 0.63, 0.62, 0.62],
+    'RF':         [0.6524, 0.65, 0.65, 0.65],
+    'SVM':        [0.6452, 0.65, 0.64, 0.64],
+    'KNN':        [0.6314, 0.63, 0.63, 0.63],
+    'KMeans_k=5': [0.5942, 0.60, 0.60, 0.59]
+}
 
-# Drop missing rows and prepare data
-df_clean = df.dropna(subset=model_features + ['WinnerBinary'])
-X = df_clean[model_features]
-y_true = df_clean['WinnerBinary']
+metrics = ['Accuracy', 'Precision', 'Recall', 'F1 Score']
 
-# Predict
-y_pred = model.predict(X)
+# --------------------------
+# Streamlit UI
+# --------------------------
 
-# Confusion matrix
-cm = confusion_matrix(y_true, y_pred)
+st.title("🔍 UFC Model Evaluation Dashboard")
 
-# Plot heatmap
-st.subheader("Confusion Matrix - Random Forest")
-fig, ax = plt.subplots(figsize=(6, 4))
-sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
-            xticklabels=['Loss', 'Win'],
-            yticklabels=['Loss', 'Win'],
-            ax=ax)
-ax.set_xlabel('Predicted Label')
-ax.set_ylabel('True Label')
-ax.set_title('Confusion Matrix - Random Forest')
+# Toggle between Train and Test
+data_type = st.radio("Select Data Type:", ["Test Set", "Train Set"])
+
+# Select View Mode
+view_mode = st.radio("Select View Mode:", ["All Metrics", "Single Metric"])
+
+# Get corresponding data
+if data_type == "Test Set":
+    selected_data = test_data
+else:
+    selected_data = train_data
+
+df = pd.DataFrame(selected_data, index=metrics)
+
+# --------------------------
+# Plotting
+# --------------------------
+
+st.subheader(f"Model Performance on {data_type}")
+
+fig, ax = plt.subplots(figsize=(12, 6))
+colors = ['lightcoral', 'goldenrod', 'mediumseagreen', 'lightseagreen']
+
+if view_mode == "All Metrics":
+    df.T.plot(kind='bar', ax=ax, color=colors)
+    plt.title(f"{data_type} - All Metrics")
+    plt.ylabel("Score")
+    plt.ylim(0, 1)
+    plt.legend(title="Metric", loc='upper right')
+else:
+    selected_metric = st.selectbox("Select Metric", metrics)
+    df.loc[selected_metric].plot(kind='bar', ax=ax, color='skyblue')
+    plt.title(f"{data_type} - {selected_metric}")
+    plt.ylabel("Score")
+    plt.ylim(0, 1)
+    plt.xticks(rotation=0)
+
+plt.xlabel("Model")
 st.pyplot(fig)
 
 # Confusion Matrix (Static Example)
