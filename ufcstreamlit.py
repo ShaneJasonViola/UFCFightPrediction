@@ -249,19 +249,16 @@ ax.set_ylabel('Percentage of Total Fights')
 ax.set_title('Win Method Distribution (KO vs Submission vs Decision)')
 st.pyplot(fig)
 
-# Elbow Method for Optimal k
+# Assuming x_scaled already exists
 inertia = []
 K = range(1, 15)
 
 for k in K:
-    kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)  # <- FIXED
+    kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)  # <-- FIXED HERE
     kmeans.fit(x_scaled)
     inertia.append(kmeans.inertia_)
 
-# Plotting the Elbow Curve in Streamlit
-import matplotlib.pyplot as plt
-import streamlit as st
-
+# Plotting in Streamlit
 st.subheader("Elbow Method for Optimal k")
 fig, ax = plt.subplots(figsize=(10, 6))
 ax.plot(K, inertia, 'bx-')
