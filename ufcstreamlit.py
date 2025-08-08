@@ -112,7 +112,14 @@ try:
 except Exception as e:
     st.error(f"Could not generate feature importances. Reason: {str(e)}")
 
+clean_features = list(dict.fromkeys(features))
 
+# Create heatmap
+st.subheader("Correlation Heatmap of Features")
+fig, ax = plt.subplots(figsize=(10, 8))
+sns.heatmap(df[clean_features].corr(), annot=True, fmt=".1f", cmap="coolwarm", ax=ax)
+plt.title("Correlation Heatmap of Features")
+st.pyplot(fig)
     
     # Compute correlation matrix
     corr_matrix = df[features].corr()
