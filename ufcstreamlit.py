@@ -112,13 +112,18 @@ try:
 except Exception as e:
     st.error(f"Could not generate feature importances. Reason: {str(e)}")
 
-clean_features = list(dict.fromkeys(features))
+# Title
+st.subheader(" Correlation Heatmap of Selected UFC Features")
 
-# Create heatmap
-st.subheader("Correlation Heatmap of Features")
+# Compute correlation matrix
+corr_matrix = df[features].corr()
+
+# Plot using matplotlib and seaborn
 fig, ax = plt.subplots(figsize=(10, 8))
-sns.heatmap(df[features].corr(), annot=True, fmt=".1f", cmap="coolwarm", ax=ax)
-plt.title("Correlation Heatmap of Features")
+sns.heatmap(corr_matrix, annot=True, fmt=".2f", cmap="coolwarm", ax=ax)
+ax.set_title("Correlation Heatmap of Selected Features", fontsize=14)
+
+# Display the heatmap in Streamlit
 st.pyplot(fig)
 
 # Confusion Matrix (Static Example)
