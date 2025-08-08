@@ -145,6 +145,11 @@ try:
 except Exception as e:
     st.error(f"Could not generate feature importances. Reason: {str(e)}")
 
+# Load data
+@st.cache_resource
+def load_data():
+    return pd.read_csv("ufc-master.csv")
+    
 # Load trained Random Forest model
 @st.cache_resource
 def load_model():
