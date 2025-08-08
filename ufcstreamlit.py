@@ -7,6 +7,7 @@ import seaborn as sns
 from sklearn.cluster import KMeans
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
+from PIL import Image
 
 # Load model
 @st.cache_resource
@@ -250,52 +251,6 @@ ax.set_ylabel('Percentage of Total Fights')
 ax.set_title('Win Method Distribution (KO vs Submission vs Decision)')
 st.pyplot(fig)
 
-st.title("Elbow Method for Optimal k")
-
-# Load data
-df = pd.read_csv("ufc-master.csv")  # Replace with your actual file
-
-# ---- Check & Create Required Columns ----
-missing_base_cols = []
-base_cols = [
-    'RedAvgTDLanded', 'BlueAvgTDLanded',
-    'RedAvgSigStrPct', 'BlueAvgSigStrPct',
-    'RedWinStreak', 'BlueWinStreak'
-]
-
-for col in base_cols:
-    if col not in df.columns:
-        missing_base_cols.append(col)
-
-if missing_base_cols:
-    st.error(f"Missing base columns in dataset: {missing_base_cols}")
-    st.stop()
-
-# Derive columns
-df['TDLandedDiff'] = df['RedAvgTDLanded'] - df['BlueAvgTDLanded']
-df['SigStrPctDiff'] = df['RedAvgSigStrPct'] - df['BlueAvgSigStrPct']
-df['WinStreakDiff'] = df['RedWinStreak'] - df['BlueWinStreak']
-
-# ---- KMeans Clustering ----
-features = ['TDLandedDiff', 'SigStrPctDiff', 'WinStreakDiff']
-X = df[features].dropna()
-
-scaler = StandardScaler()
-x_scaled = scaler.fit_transform(X)
-
-# Compute inertia
-inertia = []
-K = range(1, 15)
-for k in K:
-    kmeans = KMeans(n_clusters=k, random_state=42)
-    kmeans.fit(x_scaled)
-    inertia.append(kmeans.inertia_)
-
-# ---- Plot Elbow Curve ----
-fig, ax = plt.subplots(figsize=(10, 6))
-ax.plot(K, inertia, 'bx-')
-ax.set_xlabel('k')
-ax.set_ylabel('Sum of Squared Distances (Inertia)')
-ax.set_title('Elbow Method For Optimal k')
-ax.grid(True)
-st.pyplot(fig)
+# Load and display Elbow Method for Optimal K
+image = Image.open("ElbowMethod.png")
+st.image(image, caption="Elbow Method Chart", use_column_width=True)
