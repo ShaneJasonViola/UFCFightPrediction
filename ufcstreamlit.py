@@ -249,24 +249,47 @@ ax.set_ylabel('Percentage of Total Fights')
 ax.set_title('Win Method Distribution (KO vs Submission vs Decision)')
 st.pyplot(fig)
 
-x = df[model_features]  # Replace model_features with your actual feature list
-scaler = StandardScaler()
-x_scaled = scaler.fit_transform(X)
+# Title
+st.title("Elbow Method for Optimal k")
 
-# Elbow method
-inertia = []
-K = range(1, 15)
+# Load your data
+@st.cache_data
+def load_data():
+    return pd.read_csv("ufc-master.csv")  # Ensure this file exists in your repo
 
-for k in K:
-    kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)
-    kmeans.fit(x_scaled)
-    inertia.append(kmeans.inertia_)
+df = load_data()
 
-# Plotting the elbow chart
-plt.figure(figsize=(10, 6))
-plt.plot(K, inertia, 'bx-')
-plt.xlabel('k')
-plt.ylabel('Sum of Squared Distances (Inertia)')
-plt.title('Elbow Method For Optimal k')
-plt.grid(True)
-st.pyplot(plt)  # If you're in Streamlit
+# Define features used for clustering
+model_features = [
+    'AgeDif', 'ReachDif', 'TDLandedDiff', 'SigStrPctDiff', 'WinStreakDiff'
+]  # Use actual feature names your model was trained on
+
+# Ensure all features exist
+missing = [col for col in model_features if col not in df.columns]
+if missing:
+    st.error(f"Missing columns in dataset: {missing}")
+else:
+    # Drop rows with missing values in selected features
+    df_clean = df.dropna(subset=model_features)
+
+    # Scale the features
+    scaler = StandardScaler()
+    x_scaled = scaler.fit_transform(df_clean[model_features])
+
+    # Elbow Method logic
+    inertia = []
+    K = range(1, 15)
+    for k in K:
+        kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)
+        kmeans.fit(x_scaled)
+        inertia.append(kmeans.inertia_)
+
+    # Plot Elbow Curve
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.plot(K, inertia, 'bx-')
+    ax.set_xlabel('k')
+    ax.set_ylabel('Sum of Squared Distances (Inertia)')
+    ax.set_title('Elbow Method For Optimal k')
+    ax.grid(True)
+
+    st.pyplot(fig)
