@@ -144,7 +144,46 @@ try:
 
 except Exception as e:
     st.error(f"Could not generate feature importances. Reason: {str(e)}")
-    
+
+# Load trained Random Forest model
+@st.cache_resource
+def load_model():
+    return joblib.load("random_forest_model (1).pkl")
+
+model = load_model()
+
+# Define input features used by the model
+model_features = [
+    'RedOdds', 'BlueOdds', 'BlueAge', 'RedAge', 'AgeDif',
+    'RedWinLossRatio', 'BlueWinLossRatio',
+    'RedAvgTDLanded', 'BlueAvgTDLanded',
+    'RedAvgSigStrPct', 'BlueAvgSigStrPct',
+    'ReachDif'
+]
+
+# Drop missing rows and prepare data
+df_clean = df.dropna(subset=model_features + ['WinnerBinary'])
+X = df_clean[model_features]
+y_true = df_clean['WinnerBinary']
+
+# Predict
+y_pred = model.predict(X)
+
+# Confusion matrix
+cm = confusion_matrix(y_true, y_pred)
+
+# Plot heatmap
+st.subheader("Confusion Matrix - Random Forest")
+fig, ax = plt.subplots(figsize=(6, 4))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+            xticklabels=['Loss', 'Win'],
+            yticklabels=['Loss', 'Win'],
+            ax=ax)
+ax.set_xlabel('Predicted Label')
+ax.set_ylabel('True Label')
+ax.set_title('Confusion Matrix - Random Forest')
+st.pyplot(fig)
+
 # Confusion Matrix (Static Example)
 st.subheader("Confusion Matrix - Random Forest")
 static_cm = np.array([[602, 348], [332, 677]])
