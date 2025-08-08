@@ -253,4 +253,5 @@ st.pyplot(fig)
 
 # Load and display Elbow Method for Optimal K
 image = Image.open("ElbowMethod.png")
-st.image(image, caption="Elbow Method Chart", use_column_width=True)
+st.image(image, caption="Elbow Method Chart", use_container_width=True)
+
