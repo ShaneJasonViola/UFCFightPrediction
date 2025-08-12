@@ -143,4 +143,94 @@ ax.set_ylabel('True Label')
 plt.tight_layout()
 st.pyplot(fig)
 
+# ==============================
+# UFC Analytics Dashboard
+# ==============================
+
+# Create a tab layout: first tab for Prediction, second for Analytics
+tab1, tab2 = st.tabs(["Prediction", "Analytics"])
+
+with tab1:
+    st.header("Predict UFC Fight Outcome")
+    # Your existing prediction form logic goes here
+    # ...
+
+with tab2:
+    st.header("UFC Analytics Dashboard")
+
+    # Load UFC dataset
+    @st.cache_resource
+    def load_data():
+        return pd.read_csv("ufc-master.csv")
+    df = load_data()
+
+    # Ensure required columns exist
+    if 'WinnerBinary' not in df.columns:
+        st.error("Dataset is missing 'WinnerBinary' column.")
+    else:
+        # Chart 1: Distribution of Fight Outcomes by Method
+        st.subheader("Win Method Distribution")
+        if 'win_by' in df.columns:
+            win_method_counts = df['win_by'].value_counts().reset_index()
+            win_method_counts.columns = ['Method', 'Count']
+            fig1, ax1 = plt.subplots()
+            ax1.bar(win_method_counts['Method'], win_method_counts['Count'], color=['crimson', 'darkblue', 'gray'])
+            ax1.set_ylabel("Number of Wins")
+            ax1.set_xlabel("Win Method")
+            ax1.set_title("Distribution of Fight Outcomes")
+            st.pyplot(fig1)
+        else:
+            st.warning("Column 'win_by' not found in dataset.")
+
+        # Chart 2: Age Difference vs Win Probability
+        st.subheader("Age Difference vs Win Probability")
+        if 'BlueAge' in df.columns and 'RedAge' in df.columns:
+            df['AgeDif'] = df['BlueAge'] - df['RedAge']
+            age_win_prob = df.groupby(pd.cut(df['AgeDif'], bins=range(-15, 16, 2)))['WinnerBinary'].mean().reset_index()
+            fig2, ax2 = plt.subplots()
+            ax2.plot(age_win_prob['AgeDif'].astype(str), age_win_prob['WinnerBinary'], marker='o')
+            ax2.set_ylabel("Win Probability (Red Fighter)")
+            ax2.set_xlabel("Age Difference (Blue - Red)")
+            ax2.set_title("Effect of Age Difference on Win Rate")
+            plt.xticks(rotation=45)
+            st.pyplot(fig2)
+        else:
+            st.warning("Age columns not found in dataset.")
+
+        # Chart 3: Reach Difference Impact on Win Rate
+        st.subheader("Reach Difference Impact on Win Rate")
+        if 'RedReachCms' in df.columns and 'BlueReachCms' in df.columns:
+            df['ReachDif'] = df['RedReachCms'] - df['BlueReachCms']
+            reach_win_prob = df.groupby(pd.cut(df['ReachDif'], bins=range(-30, 31, 5)))['WinnerBinary'].mean().reset_index()
+            fig3, ax3 = plt.subplots()
+            ax3.bar(reach_win_prob['ReachDif'].astype(str), reach_win_prob['WinnerBinary'], color='orange')
+            ax3.set_ylabel("Win Probability (Red Fighter)")
+            ax3.set_xlabel("Reach Difference (cm)")
+            ax3.set_title("Reach Advantage vs Win Rate")
+            plt.xticks(rotation=45)
+            st.pyplot(fig3)
+        else:
+            st.warning("Reach columns not found in dataset.")
+
+        # Chart 4: Correlation Heatmap of Selected Features
+        st.subheader("Correlation Heatmap of Selected Features")
+        selected_features = [
+            'RedWinLossRatio', 'BlueWinLossRatio',  
+            'RedAge', 'BlueAge', 'AgeDif',
+            'RedAvgTDLanded', 'BlueAvgTDLanded', 'TDLandedDif',
+            'RedAvgTDPct', 'BlueAvgTDPct', 'TDPctDiff',
+            'RedAvgSigStrPct', 'BlueAvgSigStrPct', 'SigStrPctDif',
+            'RedAvgSigStrLanded', 'BlueAvgSigStrLanded', 'SigStrLandedDif', 
+            'ReachDif', 'SubAttDif', 'HeightDif',   
+            'RedCurrentWinStreak', 'BlueCurrentWinStreak',
+            'RedCurrentLoseStreak', 'BlueCurrentLoseStreak',
+        ]
+        available_features = [f for f in selected_features if f in df.columns]
+        if available_features:
+            fig4, ax4 = plt.subplots(figsize=(12, 9))
+            sns.heatmap(df[available_features].corr(), annot=True, cmap='coolwarm', fmt=".2f", ax=ax4)
+            ax4.set_title("Correlation Heatmap")
+            st.pyplot(fig4)
+        else:
+            st.warning("Selected features not found in dataset for correlation heatmap.")
 
