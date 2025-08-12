@@ -512,3 +512,65 @@ else:
 
     st.write(f"Accuracy: **{data['accuracy']:.4f}**")
     st.dataframe(df_rep.style.format({"precision": "{:.2f}", "recall": "{:.2f}", "f1": "{:.2f}", "support": "{:.0f}"}))
+
+st.subheader("Model Performance Comparison")
+
+# Controls
+colc1, colc2 = st.columns(2)
+with colc1:
+    split_for_chart = st.selectbox("Chart: Train or Test", ["Test", "Train"], index=0)
+with colc2:
+    # You can chart either the 'weighted avg' row (default) or 'macro avg'
+    avg_row = st.selectbox("Averaging row to use", ["weighted avg", "macro avg"], index=0)
+
+# Build a summary DataFrame from the static reports
+rows = []
+for model_name, rep in reports.items():
+    block = rep.get(split_for_chart)
+    if block is None:
+        continue  # e.g., Train for KMeans_k=5
+    # accuracy
+    acc = block["accuracy"]
+    # find the chosen averaging row
+    r = next((r for r in block["rows"] if r["label"] == avg_row), None)
+    if r is None:
+        # fall back to weighted avg if requested row missing
+        r = next((r for r in block["rows"] if r["label"] == "weighted avg"), None)
+    rows.append({
+        "Model": model_name,
+        "Accuracy": acc,
+        "Precision": r["precision"] if r else None,
+        "Recall": r["recall"] if r else None,
+        "F1": r["f1"] if r else None
+    })
+
+summary_df = pd.DataFrame(rows).set_index("Model").sort_index()
+
+# Let user choose to plot all metrics or a single one
+mode = st.radio("Chart mode", ["All metrics", "Single metric"], index=0)
+if mode == "Single metric":
+    metric_choice = st.selectbox("Metric", ["Accuracy", "Precision", "Recall", "F1"], index=0)
+
+# Plot
+fig, ax = plt.subplots(figsize=(12, 6))
+
+x = np.arange(len(summary_df.index))
+bar_width = 0.2
+
+if mode == "All metrics":
+    ax.bar(x - 1.5*bar_width, summary_df["Accuracy"], width=bar_width, label="Accuracy")
+    ax.bar(x - 0.5*bar_width, summary_df["Precision"], width=bar_width, label="Precision")
+    ax.bar(x + 0.5*bar_width, summary_df["Recall"], width=bar_width, label="Recall")
+    ax.bar(x + 1.5*bar_width, summary_df["F1"], width=bar_width, label="F1")
+    ax.set_title(f"{split_for_chart} Set — {avg_row} (per model)")
+else:
+    ax.bar(x, summary_df[metric_choice], width=0.6, label=metric_choice)
+    ax.set_title(f"{split_for_chart} Set — {avg_row} — {metric_choice} (per model)")
+
+ax.set_xticks(x)
+ax.set_xticklabels(summary_df.index, rotation=0)
+ax.set_ylabel("Score")
+ax.set_ylim(0, 1)
+ax.legend()
+ax.grid(axis="y", linestyle="--", alpha=0.4)
+st.pyplot(fig)
