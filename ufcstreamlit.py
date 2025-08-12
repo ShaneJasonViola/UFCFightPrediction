@@ -579,4 +579,5 @@ st.pyplot(fig)
 # Show Elbow Method 
 # ================================
 st.subheader("K-Means Elbow Method")
-st.image("ElbowMethod.png", caption="Elbow Method for Optimal k", use_column_width=True)
+st.image("ElbowMethod.png", caption="Elbow Method for Optimal k", use_container_width=True)
+
