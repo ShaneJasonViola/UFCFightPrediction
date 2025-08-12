@@ -258,4 +258,40 @@ ax.grid(True, axis='x', linestyle='--', alpha=0.4)
 ax.invert_yaxis()
 st.pyplot(fig)
 
+# -------------------------------
+# Correlation Matrix for Selected Features
+# -------------------------------
+st.header("Correlation Matrix for Selected Features")
 
+corr_features = [
+    'RedWinLossRatio', 'BlueWinLossRatio',  
+    'RedAge', 'BlueAge', 'AgeDif',
+    'RedAvgTDLanded', 'BlueAvgTDLanded', 'TDLandedDif',
+    'RedAvgTDPct', 'BlueAvgTDPct', 'TDPctDiff',
+    'RedAvgSigStrPct', 'BlueAvgSigStrPct', 'SigStrPctDif',
+    'RedAvgSigStrLanded', 'BlueAvgSigStrLanded', 'SigStrLandedDif', 
+    'ReachDif', 'SubAttDif', 'HeightDif',   
+    'RedCurrentWinStreak', 'BlueCurrentWinStreak',
+    'RedCurrentLoseStreak', 'BlueCurrentLoseStreak'
+]
+
+# Filter dataset to only those columns that actually exist
+available_corr_features = [f for f in corr_features if f in df_all.columns]
+
+if not available_corr_features:
+    st.error("None of the selected correlation features are available in the dataset.")
+else:
+    corr_matrix = df_all[available_corr_features].corr()
+
+    fig, ax = plt.subplots(figsize=(12, 10))
+    sns.heatmap(
+        corr_matrix,
+        annot=True,
+        fmt=".2f",
+        cmap="coolwarm",
+        cbar=True,
+        square=True,
+        ax=ax
+    )
+    ax.set_title("Correlation Matrix of Selected Features", fontsize=16)
+    st.pyplot(fig)
