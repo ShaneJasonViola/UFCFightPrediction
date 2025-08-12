@@ -332,3 +332,46 @@ ax.set_ylim(0, 100)
 ax.set_ylabel('Percentage of Total Wins')
 ax.set_title('Win Method Distribution (KO vs Submission vs Decision)')
 st.pyplot(fig)
+
+
+
+# Example: Store your classification reports in a dictionary (like you already have)
+# classification_reports = { "LOG-R": {"Train": "...", "Test": "..."}, ... }
+
+st.subheader("Model Classification Reports")
+
+# Sidebar select box for model selection
+model_choice = st.selectbox("Select Model", list(classification_reports.keys()))
+
+# Select Train or Test report
+report_type = st.radio("Select Report Type", ["Train", "Test"])
+
+# Display the selected report
+st.text_area(
+    f"{model_choice} - {report_type} Report",
+    classification_reports[model_choice][report_type],
+    height=300
+)
+
+# Plot model performance metrics for Test set
+st.subheader("Model Performance Comparison (Test Set)")
+
+# Assuming you have these lists from earlier
+# model_names, test_accs, test_prec, test_rec, test_f1s
+
+x = np.arange(len(model_names))
+bar_width = 0.2
+
+fig, ax = plt.subplots(figsize=(12, 6))
+ax.bar(x - 1.5*bar_width, test_accs, width=bar_width, label='Accuracy')
+ax.bar(x - 0.5*bar_width, test_prec, width=bar_width, label='Precision')
+ax.bar(x + 0.5*bar_width, test_rec, width=bar_width, label='Recall')
+ax.bar(x + 1.5*bar_width, test_f1s, width=bar_width, label='F1 Score')
+
+ax.set_xticks(x)
+ax.set_xticklabels(model_names)
+ax.set_ylabel('Score')
+ax.set_title('Model Performance on Test Set')
+ax.legend()
+
+st.pyplot(fig)
