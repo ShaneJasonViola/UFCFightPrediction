@@ -295,3 +295,40 @@ else:
     )
     ax.set_title("Correlation Matrix of Selected Features", fontsize=16)
     st.pyplot(fig)
+
+# --------------------------------
+# Win Method Distribution Chart
+# --------------------------------
+st.subheader("Win Method Distribution (KO vs Submission vs Decision)")
+
+# Calculate wins by method
+ko_wins = df_all['RedWinsByKO'].sum() + df_all['BlueWinsByKO'].sum()
+sub_wins = df_all['RedWinsBySubmission'].sum() + df_all['BlueWinsBySubmission'].sum()
+
+# Assuming total wins = RedWins + BlueWins
+total_wins = df_all['RedWins'].sum() + df_all['BlueWins'].sum()
+decision_wins = total_wins - (ko_wins + sub_wins)
+
+# Create DataFrame
+win_data = pd.DataFrame({
+    'Method': ['KO', 'Submission', 'Decision'],
+    'Wins': [ko_wins, sub_wins, decision_wins]
+})
+
+# Convert to percentages
+win_data['Percentage'] = (win_data['Wins'] / win_data['Wins'].sum()) * 100
+
+# Plot
+fig, ax = plt.subplots(figsize=(8, 6))
+bars = ax.bar(win_data['Method'], win_data['Percentage'], color=['crimson', 'darkblue', 'gray'])
+
+# Add labels on top
+for bar in bars:
+    height = bar.get_height()
+    ax.text(bar.get_x() + bar.get_width()/2.0, height + 1,
+            f'{height:.1f}%', ha='center', va='bottom', fontsize=12)
+
+ax.set_ylim(0, 100)
+ax.set_ylabel('Percentage of Total Wins')
+ax.set_title('Win Method Distribution (KO vs Submission vs Decision)')
+st.pyplot(fig)
