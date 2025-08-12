@@ -134,48 +134,43 @@ df = load_data()
 # =========================
 st.header("UFC Analytics Dashboard")
 
-# Chart 1: Correlation Heatmap
-st.subheader("Correlation Heatmap")
-features_for_corr = [col for col in df.columns if col != 'WinnerBinary' and df[col].dtype in ['float64', 'int64']]
-fig, ax = plt.subplots(figsize=(12, 9))
-sns.heatmap(df[features_for_corr].corr(), annot=False, cmap="coolwarm", ax=ax)
-st.pyplot(fig)
 
-# Chart 2: Win Method Distribution
-st.subheader("Win Method Distribution")
-if 'Method' in df.columns:
-    win_counts = df['Method'].value_counts()
-    fig, ax = plt.subplots()
-    win_counts.plot(kind='bar', ax=ax, color='steelblue')
-    ax.set_ylabel("Count")
-    ax.set_title("Win Methods in Dataset")
+
+# Feature Correlation with WinnerBinary
+st.subheader("Feature Correlation with WinnerBinary")
+
+# List of all relevant features including target
+features_corr = [
+    'RedWinLossRatio', 'BlueWinLossRatio', 'RedWins', 'BlueWins',
+    'RedAge', 'BlueAge', 'AgeDif',
+    'RedAvgTDLanded', 'BlueAvgTDLanded', 'RedAvgTDPct', 'BlueAvgTDPct', 'TDPctDiff',
+    'RedAvgSigStrPct', 'BlueAvgSigStrPct', 'SigStrPctDif',
+    'RedAvgSigStrLanded', 'BlueAvgSigStrLanded', 'SigStrLandedDif', 
+    'SubAttDif', 'WinnerBinary', 'HeightDif',
+    'ReachDif', 'FightExperienceDiff',
+    'RedCurrentWinStreak', 'BlueCurrentWinStreak',
+    'RedCurrentLoseStreak', 'BlueCurrentLoseStreak',
+]
+
+# Only keep features that actually exist in dataset
+features_corr = [f for f in features_corr if f in df.columns]
+
+# Compute correlations
+if 'WinnerBinary' in df.columns:
+    corr_df = df[features_corr].corr()['WinnerBinary'].drop('WinnerBinary').sort_values(ascending=False)
+
+    # Plot in Streamlit
+    fig, ax = plt.subplots(figsize=(10, 8))
+    corr_df.plot(kind='barh', color='skyblue', ax=ax)
+    ax.set_title('Feature Correlation with WinnerBinary')
+    ax.set_xlabel('Correlation Coefficient')
+    ax.set_ylabel('Features')
+    ax.grid(True)
+    ax.invert_yaxis()  # Highest correlation at top
     st.pyplot(fig)
+
+    # Also show as table
+    st.dataframe(corr_df.to_frame(name='Correlation'))
 else:
-    st.warning("'Method' column not found in dataset.")
-
-# Chart 3: Age Distribution by Winner
-st.subheader("Age Distribution by Winner")
-if 'RedAge' in df.columns and 'BlueAge' in df.columns:
-    winner_ages = pd.DataFrame({
-        'Winner': df['WinnerBinary'],
-        'RedAge': df['RedAge'],
-        'BlueAge': df['BlueAge']
-    })
-    fig, ax = plt.subplots()
-    sns.kdeplot(winner_ages['RedAge'], label="Red Fighter Age", ax=ax)
-    sns.kdeplot(winner_ages['BlueAge'], label="Blue Fighter Age", ax=ax)
-    ax.set_title("Age Distribution of Fighters")
-    ax.legend()
-    st.pyplot(fig)
-
-# Chart 4: Odds Distribution
-st.subheader("Odds Distribution")
-if 'RedOdds' in df.columns and 'BlueOdds' in df.columns:
-    fig, ax = plt.subplots()
-    sns.histplot(df['RedOdds'], label="Red Odds", color='red', kde=True, ax=ax)
-    sns.histplot(df['BlueOdds'], label="Blue Odds", color='blue', kde=True, ax=ax)
-    ax.legend()
-    ax.set_title("Odds Distribution")
-    st.pyplot(fig)
-
+    st.error("WinnerBinary column is missing from dataset.")
 
