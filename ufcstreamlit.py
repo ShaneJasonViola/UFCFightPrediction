@@ -335,43 +335,180 @@ st.pyplot(fig)
 
 
 
-# Example: Store your classification reports in a dictionary (like you already have)
-# classification_reports = { "LOG-R": {"Train": "...", "Test": "..."}, ... }
+# ================================
+# Interactive Classification Reports (static data)
+# ================================
+import streamlit as st
+import pandas as pd
 
-st.subheader("Model Classification Reports")
+st.header("Classification Reports (Interactive)")
 
-# Sidebar select box for model selection
-model_choice = st.selectbox("Select Model", list(classification_reports.keys()))
+# ---- Static reports encoded as structured data ----
+reports = {
+    "LOG-R": {
+        "Train": {
+            "accuracy": 0.6084,
+            "rows": [
+                {"label": "0", "precision": 0.61, "recall": 0.61, "f1": 0.61, "support": 2281},
+                {"label": "1", "precision": 0.61, "recall": 0.61, "f1": 0.61, "support": 2288},
+                {"label": "macro avg", "precision": 0.61, "recall": 0.61, "f1": 0.61, "support": 4569},
+                {"label": "weighted avg", "precision": 0.61, "recall": 0.61, "f1": 0.61, "support": 4569},
+            ],
+        },
+        "Test": {
+            "accuracy": 0.5886,
+            "rows": [
+                {"label": "0", "precision": 0.58, "recall": 0.58, "f1": 0.58, "support": 950},
+                {"label": "1", "precision": 0.60, "recall": 0.60, "f1": 0.60, "support": 1009},
+                {"label": "macro avg", "precision": 0.59, "recall": 0.59, "f1": 0.59, "support": 1959},
+                {"label": "weighted avg", "precision": 0.59, "recall": 0.59, "f1": 0.59, "support": 1959},
+            ],
+        },
+    },
+    "GNB": {
+        "Train": {
+            "accuracy": 0.5892,
+            "rows": [
+                {"label": "0", "precision": 0.58, "recall": 0.62, "f1": 0.60, "support": 2281},
+                {"label": "1", "precision": 0.60, "recall": 0.56, "f1": 0.58, "support": 2288},
+                {"label": "macro avg", "precision": 0.59, "recall": 0.59, "f1": 0.59, "support": 4569},
+                {"label": "weighted avg", "precision": 0.59, "recall": 0.59, "f1": 0.59, "support": 4569},
+            ],
+        },
+        "Test": {
+            "accuracy": 0.5651,
+            "rows": [
+                {"label": "0", "precision": 0.55, "recall": 0.58, "f1": 0.56, "support": 950},
+                {"label": "1", "precision": 0.58, "recall": 0.55, "f1": 0.57, "support": 1009},
+                {"label": "macro avg", "precision": 0.57, "recall": 0.57, "f1": 0.57, "support": 1959},
+                {"label": "weighted avg", "precision": 0.57, "recall": 0.57, "f1": 0.57, "support": 1959},
+            ],
+        },
+    },
+    "DT": {
+        "Train": {
+            "accuracy": 0.6159,
+            "rows": [
+                {"label": "0", "precision": 0.60, "recall": 0.67, "f1": 0.64, "support": 2281},
+                {"label": "1", "precision": 0.63, "recall": 0.56, "f1": 0.59, "support": 2288},
+                {"label": "macro avg", "precision": 0.62, "recall": 0.62, "f1": 0.61, "support": 4569},
+                {"label": "weighted avg", "precision": 0.62, "recall": 0.62, "f1": 0.61, "support": 4569},
+            ],
+        },
+        "Test": {
+            "accuracy": 0.5615,
+            "rows": [
+                {"label": "0", "precision": 0.54, "recall": 0.61, "f1": 0.58, "support": 950},
+                {"label": "1", "precision": 0.58, "recall": 0.51, "f1": 0.55, "support": 1009},
+                {"label": "macro avg", "precision": 0.56, "recall": 0.56, "f1": 0.56, "support": 1959},
+                {"label": "weighted avg", "precision": 0.56, "recall": 0.56, "f1": 0.56, "support": 1959},
+            ],
+        },
+    },
+    "RF": {
+        "Train": {
+            "accuracy": 0.9192,
+            "rows": [
+                {"label": "0", "precision": 0.91, "recall": 0.93, "f1": 0.92, "support": 2281},
+                {"label": "1", "precision": 0.93, "recall": 0.91, "f1": 0.92, "support": 2288},
+                {"label": "macro avg", "precision": 0.92, "recall": 0.92, "f1": 0.92, "support": 4569},
+                {"label": "weighted avg", "precision": 0.92, "recall": 0.92, "f1": 0.92, "support": 4569},
+            ],
+        },
+        "Test": {
+            "accuracy": 0.5926,
+            "rows": [
+                {"label": "0", "precision": 0.58, "recall": 0.59, "f1": 0.59, "support": 950},
+                {"label": "1", "precision": 0.61, "recall": 0.59, "f1": 0.60, "support": 1009},
+                {"label": "macro avg", "precision": 0.59, "recall": 0.59, "f1": 0.59, "support": 1959},
+                {"label": "weighted avg", "precision": 0.59, "recall": 0.59, "f1": 0.59, "support": 1959},
+            ],
+        },
+    },
+    "SVM": {
+        "Train": {
+            "accuracy": 0.6133,
+            "rows": [
+                {"label": "0", "precision": 0.61, "recall": 0.62, "f1": 0.61, "support": 2281},
+                {"label": "1", "precision": 0.62, "recall": 0.61, "f1": 0.61, "support": 2288},
+                {"label": "macro avg", "precision": 0.61, "recall": 0.61, "f1": 0.61, "support": 4569},
+                {"label": "weighted avg", "precision": 0.61, "recall": 0.61, "f1": 0.61, "support": 4569},
+            ],
+        },
+        "Test": {
+            "accuracy": 0.5972,
+            "rows": [
+                {"label": "0", "precision": 0.58, "recall": 0.59, "f1": 0.59, "support": 950},
+                {"label": "1", "precision": 0.61, "recall": 0.60, "f1": 0.61, "support": 1009},
+                {"label": "macro avg", "precision": 0.60, "recall": 0.60, "f1": 0.60, "support": 1959},
+                {"label": "weighted avg", "precision": 0.60, "recall": 0.60, "f1": 0.60, "support": 1959},
+            ],
+        },
+    },
+    "KNN": {
+        "Train": {
+            "accuracy": 0.6251,
+            "rows": [
+                {"label": "0", "precision": 0.63, "recall": 0.61, "f1": 0.62, "support": 2281},
+                {"label": "1", "precision": 0.62, "recall": 0.64, "f1": 0.63, "support": 2288},
+                {"label": "macro avg", "precision": 0.63, "recall": 0.63, "f1": 0.63, "support": 4569},
+                {"label": "weighted avg", "precision": 0.63, "recall": 0.63, "f1": 0.63, "support": 4569},
+            ],
+        },
+        "Test": {
+            "accuracy": 0.5916,
+            "rows": [
+                {"label": "0", "precision": 0.58, "recall": 0.59, "f1": 0.59, "support": 950},
+                {"label": "1", "precision": 0.61, "recall": 0.59, "f1": 0.60, "support": 1009},
+                {"label": "macro avg", "precision": 0.59, "recall": 0.59, "f1": 0.59, "support": 1959},
+                {"label": "weighted avg", "precision": 0.59, "recall": 0.59, "f1": 0.59, "support": 1959},
+            ],
+        },
+    },
+    "KMeans_k=5": {
+        "Train": None,  # N/A for unsupervised
+        "Test": {
+            "accuracy": 0.51,
+            "rows": [
+                {"label": "0", "precision": 0.50, "recall": 0.44, "f1": 0.47, "support": 950},
+                {"label": "1", "precision": 0.53, "recall": 0.58, "f1": 0.55, "support": 1009},
+                {"label": "macro avg", "precision": 0.51, "recall": 0.51, "f1": 0.51, "support": 1959},
+                {"label": "weighted avg", "precision": 0.51, "recall": 0.51, "f1": 0.51, "support": 1959},
+            ],
+        },
+    },
+}
 
-# Select Train or Test report
-report_type = st.radio("Select Report Type", ["Train", "Test"])
+# ---- Controls ----
+col_sel1, col_sel2, col_sel3 = st.columns([1, 1, 2])
+with col_sel1:
+    model_name = st.selectbox("Model", list(reports.keys()))
+with col_sel2:
+    split = st.selectbox("Data Split", ["Train", "Test"])
+with col_sel3:
+    # Which rows to display (classes / averages)
+    default_rows = ["0", "1", "macro avg", "weighted avg"]
+    available_rows = []
+    if reports[model_name][split] is not None:
+        available_rows = [r["label"] for r in reports[model_name][split]["rows"]]
+    selected_rows = st.multiselect(
+        "Rows to display",
+        options=available_rows,
+        default=[r for r in default_rows if r in available_rows],
+    )
 
-# Display the selected report
-st.text_area(
-    f"{model_choice} - {report_type} Report",
-    classification_reports[model_choice][report_type],
-    height=300
-)
+# ---- Render ----
+data = reports[model_name][split]
+if data is None:
+    st.info("Train report is not applicable for this model.")
+else:
+    df_rep = pd.DataFrame(data["rows"]).set_index("label")
+    if selected_rows:
+        df_rep = df_rep.loc[selected_rows]
 
-# Plot model performance metrics for Test set
-st.subheader("Model Performance Comparison (Test Set)")
+    # Optional: sort by a metric
+    sort_by = st.selectbox("Sort by metric", ["precision", "recall", "f1", "support"])
+    df_rep = df_rep.sort_values(by=sort_by, ascending=(sort_by == "support"))
 
-# Assuming you have these lists from earlier
-# model_names, test_accs, test_prec, test_rec, test_f1s
-
-x = np.arange(len(model_names))
-bar_width = 0.2
-
-fig, ax = plt.subplots(figsize=(12, 6))
-ax.bar(x - 1.5*bar_width, test_accs, width=bar_width, label='Accuracy')
-ax.bar(x - 0.5*bar_width, test_prec, width=bar_width, label='Precision')
-ax.bar(x + 0.5*bar_width, test_rec, width=bar_width, label='Recall')
-ax.bar(x + 1.5*bar_width, test_f1s, width=bar_width, label='F1 Score')
-
-ax.set_xticks(x)
-ax.set_xticklabels(model_names)
-ax.set_ylabel('Score')
-ax.set_title('Model Performance on Test Set')
-ax.legend()
-
-st.pyplot(fig)
+    st.write(f"Accuracy: **{data['accuracy']:.4f}**")
+    st.dataframe(df_rep.style.format({"precision": "{:.2f}", "recall": "{:.2f}", "f1": "{:.2f}", "support": "{:.0f}"}))
