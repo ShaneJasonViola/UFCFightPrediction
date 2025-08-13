@@ -13,7 +13,7 @@ from sklearn.preprocessing import StandardScaler
 # -------------------------------
 st.set_page_config(page_title="UFC Fight Outcome Predictor (SVM)", layout="wide")
 st.title("UFC Fight Outcome Predictor (SVM)")
-st.markdown("Enter both fighters' statistics below. The app will predict the winner using your SVM model.")
+st.markdown("Enter both fighters' statistics below.")
 
 # Resource links
 st.markdown("## Resources to Look Up Information")
@@ -25,7 +25,7 @@ with c2:
 
 CSV_PATH = "ufc-master.csv"
 MODEL_PATH = "svm_model.pkl"
-PREPROC_PATH = "svm_preprocess.pkl"   # optional saved tuple: (imputer, scaler)
+PREPROC_PATH = "svm_preprocess.pkl"   
 
 # The exact feature order used to train the SVM
 FEATURE_ORDER = [
@@ -161,7 +161,7 @@ df_all = load_dataset()
 imputer, scaler = load_or_fit_preprocessor(df_all)
 
 # -------------------------------
-# Prediction form (no odds; mutually exclusive streaks)
+# Prediction form 
 # -------------------------------
 with st.form("fight_input_form"):
     c1, c2 = st.columns(2)
@@ -506,7 +506,7 @@ else:
     if selected_rows:
         df_rep = df_rep.loc[selected_rows]
 
-    # Optional: sort by a metric
+    # Sort by a metric
     sort_by = st.selectbox("Sort by metric", ["precision", "recall", "f1", "support"])
     df_rep = df_rep.sort_values(by=sort_by, ascending=(sort_by == "support"))
 
@@ -520,10 +520,10 @@ colc1, colc2 = st.columns(2)
 with colc1:
     split_for_chart = st.selectbox("Chart: Train or Test", ["Test", "Train"], index=0)
 with colc2:
-    # You can chart either the 'weighted avg' row (default) or 'macro avg'
+    # Select the 'weighted avg' row (default) or 'macro avg'
     avg_row = st.selectbox("Averaging row to use", ["weighted avg", "macro avg"], index=0)
 
-# Build a summary DataFrame from the static reports
+# Summary DataFrame from the static reports
 rows = []
 for model_name, rep in reports.items():
     block = rep.get(split_for_chart)
